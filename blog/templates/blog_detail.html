@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{ blog_detail.title }}</title>
+</head>
+<body>
+    <div>
+        <a href="{% url 'home' %}">
+            <h3>返回博客列表</h3>
+        </a>
+    </div>
+    <h2>{{ blog_detail.title }}</h2>
+    <p>作者是：{{ blog_detail.author }}</p>
+    <p>创作时间：{{ blog_detail.created_time | date:'Y-m-d H:n:s' }}</p>
+    <p>博客类型是：
+{#        {{ blog_detail.blog_type.pk }}#}
+        <!--blog_detail.blog_type.pk为传进urls.py的数据-->
+        <a href="{% url 'blog_with_type' blog_detail.blog_type.pk %}">{{ blog_detail.blog_type }}</a>
+    </p>
+    <p>{{ blog_detail.content }}</p>
+    <!--a标签内的href的home式urls文件中对应路径的name名字-->
+</body>
+</html>
