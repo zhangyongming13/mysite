@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!--创建一个block快，名字叫title，用于其他模块调用的使用填充数据-->
+    <title>{% block title %}
+    {% endblock %}</title>
+</head>
+<body>
+    <div>
+        <a href="{% url 'home' %}">
+            <h3>个人博客网站</h3>
+        </a>
+    </div>
+    <hr>
+    <!--创建一个content模块，名字叫title，用于其他模块调用的使用填充数据-->
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

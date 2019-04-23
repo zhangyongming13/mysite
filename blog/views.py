@@ -8,7 +8,8 @@ def Blog_list(request):
     # 使用过滤器过滤掉标记为删除的博客，传入的是一个可迭代的对象
     context['blogs'] = Blog.objects.filter(is_delete=False)
     # 引用templates文件中的模板，content为传进模板的数据，腰围dict类型
-    return render(request, "blog_list.html", context)
+    return render(request, "blog/blog_list.html", context)
+    # 如果把某些App的模板文件放在全局模板文件夹中的某一个文件夹，就要设置该文件夹，不然找不到模板文件
 
 
 def Blog_detail(request, blog_pk):
