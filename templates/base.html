@@ -10,14 +10,34 @@
     {% endblock %}</title>
 </head>
 <body>
-    <div>
-        <a href="{% url 'home' %}">
+    <div class="nav">
+        <a class="logo" href="{% url 'home' %}">
             <h3>个人博客网站</h3>
         </a>
+        <a href="/">首页</a>
+        <a href="{% url 'blog_list' %}">博客</a>
     </div>
-    <hr>
     <!--创建一个content模块，名字叫title，用于其他模块调用的使用填充数据-->
     {% block content %}
     {% endblock %}
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        div.nav {
+            background-color: #eee;
+            border-bottom: 1px solid #ccc;
+        }
+        {#取消整个导航栏的下划线， nav为div的class类名，div.nav a表示该div下的所有a标签的样式#}
+        div.nav a{
+            text-decoration: none;
+            color: #000000;
+            padding: 5px 10px;
+        }
+        div.nav a.logo{
+            display:inline-block;
+        }
+    </style>
 </body>
 </html>

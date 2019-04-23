@@ -16,9 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from blog.views import Blog_list
+from .views import home
 
 urlpatterns = [
-    path('', Blog_list, name='home'),  # 根目录
+    path('', home, name='home'),  # 根目录，把之前的博客列表换成这个
     path('admin/', admin.site.urls),
     # 结合Django根目录的urls文件，整个访问网址是
     #  http://192.168.1.247:8000/blog/1
