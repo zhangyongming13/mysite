@@ -1,7 +1,20 @@
 {% extends 'base.html' %}
+{#另外一种引入css固态文件的方法#}
+{% load staticfiles %}
 {% block title %}
     我的网站|首页
 {% endblock %}
 {% block content %}
-    欢迎访问我的网站，随便看！！！
+    <link rel="stylesheet" href={% static 'home.css' %}>
+    <h3 class="home_content">欢迎访问我的博客，随便看！！！</h3>
+{#    <style type="text/css">#}
+{#        h3.home_content {#}
+{#            font-size: 180%;#}
+{#            position: absolute;#}
+{#            top: 50%;#}
+{#            left: 50%;#}
+            {#transform: translate(-50%, -50%)使元素左偏移宽度的一半，上偏移一半#}
+{#            transform: translate(-50%, -50%);#}
+{#        }#}
+{#    </style>#}
 {% endblock %}

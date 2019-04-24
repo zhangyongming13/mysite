@@ -1,0 +1,8 @@
+h3.home_content {
+            font-size: 180%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            /*{#transform: translate(-50%, -50%)使元素左偏移宽度的一半，上偏移一半#}*/
+            transform: translate(-50%, -50%);
+        }

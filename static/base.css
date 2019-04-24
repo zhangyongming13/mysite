@@ -1,0 +1,19 @@
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    div.nav {
+        background-color: #eee;
+        /*<!--修改div块中每个元素外框之间的间隔-->*/
+        padding: 10px 5px;
+        border-bottom: 1px solid #ccc;
+    }
+    /*<!--取消整个导航栏的下划线， nav为div的class类名，div.nav a表示该div下的所有a标签的样式*/
+    div.nav a{
+        text-decoration: none;
+        color: #000000;
+        padding: 5px 10px;
+    }
+    div.nav a.logo{
+        display:inline-block;
+    }

@@ -5,6 +5,8 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {#    这里link标签引入相应的css静态文件#}
+    <link rel="stylesheet" href="/static/base.css">
     <!--创建一个block快，名字叫title，用于其他模块调用的使用填充数据-->
     <title>{% block title %}
     {% endblock %}</title>
@@ -20,24 +22,5 @@
     <!--创建一个content模块，名字叫title，用于其他模块调用的使用填充数据-->
     {% block content %}
     {% endblock %}
-    <style type="text/css">
-        * {
-            margin: 0;
-            padding: 0;
-        }
-        div.nav {
-            background-color: #eee;
-            border-bottom: 1px solid #ccc;
-        }
-        {#取消整个导航栏的下划线， nav为div的class类名，div.nav a表示该div下的所有a标签的样式#}
-        div.nav a{
-            text-decoration: none;
-            color: #000000;
-            padding: 5px 10px;
-        }
-        div.nav a.logo{
-            display:inline-block;
-        }
-    </style>
 </body>
 </html>
