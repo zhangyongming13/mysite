@@ -1,15 +1,23 @@
+{% load staticfiles %}
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    {#    相应式页面的布局#}
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    {#    告诉IE浏览器使用最新的IE内核#}
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {#    引入bootstrap的css样式#}
+    <link rel="stylesheet" href="{% static '/bootstrap-3.3.7/css/bootstrap.min.css' %}">
+    {#    引用Jquery文件#}
+    <script type="text/javascript" src="{% static '/jquery_1.12.4.min.js' %}"></script>
+    {#    引入bootstrap的js库#}
+    <script type="text/javascript" src="{% static 'bootstrap-3.3.7/js/bootstrap.min.js' %}"></script>
     {#    这里link标签引入相应的css静态文件#}
     <link rel="stylesheet" href="/static/base.css">
     <!--创建一个block快，名字叫title，用于其他模块调用的使用填充数据-->
-    <title>{% block title %}
-    {% endblock %}</title>
+    <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
     <div class="nav">
