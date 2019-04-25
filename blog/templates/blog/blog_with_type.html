@@ -1,11 +1,16 @@
-<!--extends表示引用名为base.html模板文件-->
 {% extends 'base.html' %}
-<!--block模块对应base里面的title模块，这里的数据会填充到base.html文件中-->
 {% block title %}
-    博客文章列表
+    类型为{{ blogs_type }}的所有博客
 {% endblock %}
-<!--block模块对应base里面的content模块，这里的数据会填充到base.html文件中-->
+
+{% block nav_blog_active %}
+    active
+{% endblock %}
+
 {% block content %}
+    <div>
+        <h2>类型为{{ blogs_type }}的博文如下：</h2>
+    </div>
     {% for blog in blogs %}
         <!--其中blo_detail为urls.py文件中的name别称-->
         <a href="{% url 'blog_detail' blog.pk %}">{{ blog.title }}</a>
@@ -17,6 +22,9 @@
     {% endfor %}
     <!--blog | length计算出可迭代对象长度，即个数-->
     <p>一共有{{ blogs | length }}篇博客</p>
+{#    <a href="{% url 'blog_with_type' blog_type_pk %}">返回类型为{{ blogs_type }}的博客列表</a>#}
+{#    <br>#}
+    <a href="{% url 'home' %}">返回博客首页</a>
 {% endblock %}
 
 {#<!doctype html>#}
@@ -26,9 +34,12 @@
 {#    <meta name="viewport"#}
 {#          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">#}
 {#    <meta http-equiv="X-UA-Compatible" content="ie=edge">#}
-{#    <title>博客文章列表</title>#}
+{#    <title>类型为{{ blogs_type }}的所有博客</title>#}
 {#</head>#}
 {#<body>#}
+{#    <div>#}
+{#        <h2>类型为{{ blogs_type }}的博文如下：</h2>#}
+{#    </div>#}
 {#    {% for blog in blogs %}#}
 {#        <!--其中blo_detail为urls.py文件中的name别称-->#}
 {#        <a href="{% url 'blog_detail' blog.pk %}">{{ blog.title }}</a>#}
@@ -40,5 +51,8 @@
 {#    {% endfor %}#}
 {#    <!--blog | length计算出可迭代对象长度，即个数-->#}
 {#    <p>一共有{{ blogs | length }}篇博客</p>#}
+{#    <a href="{% url 'blog_with_type' blog_type_pk %}">返回类型为{{ blogs_type }}的博客列表</a>#}
+{#    <br>#}
+{#    <a href="{% url 'home' %}">返回博客首页</a>#}
 {#</body>#}
 {#</html>#}

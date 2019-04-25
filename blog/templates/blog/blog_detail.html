@@ -2,12 +2,12 @@
 {% block title %}
     {{ blog_detail.title }}
 {% endblock %}
+
+{% block nav_blog_active %}
+    active
+{% endblock %}
+
 {% block content %}
-    <div>
-        <a href="{% url 'home' %}">
-            <h3>返回博客列表</h3>
-        </a>
-    </div>
     <h2>{{ blog_detail.title }}</h2>
     <p>作者是：{{ blog_detail.author }}</p>
     <p>创作时间：{{ blog_detail.created_time | date:'Y-m-d H:n:s' }}</p>

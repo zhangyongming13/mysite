@@ -1,0 +1,85 @@
+<!--extends表示引用名为base.html模板文件-->
+{% extends 'base.html' %}
+<!--block模块对应base里面的title模块，这里的数据会填充到base.html文件中-->
+{% block title %}
+    博客文章列表
+{% endblock %}
+
+{% block nav_blog_active %}
+    active
+{% endblock %}
+
+<!--block模块对应base里面的content模块，这里的数据会填充到base.html文件中-->
+{% block content %}
+    <div class="container">
+        <div class="row">
+{#        col-xs-12 col-md-8 col-md-9 col-lg-10分别表示不同屏幕大小下占用的列数#}
+            <div class="col-xs-12 col-sm-8 col-md-9 col-lg-10">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <!--blog | length计算出可迭代对象长度，即个数-->
+                        博客列表（一共有{{ blogs | length }}篇博客）
+                    </div>
+                    <div class="panel-body">
+                        {#让每个li列表前面没有小黑点#}
+                        <ul style="list-style-type: none">
+                            {% for blog in blogs %}
+                                <!--其中blo_detail为urls.py文件中的name别称-->
+                                <a href="{% url 'blog_detail' blog.pk %}">{{ blog.title }}</a>
+                                <!--利用truncatechars:30过滤器，只显示前30个字符-->
+                                <p>{{ blog.content | truncatechars:50}}</p>
+                            {% empty %}
+                                <!--如果没有获取到内容即for内容为空，则显示下面的内容-->
+                                <p>--暂无博客敬请期待--</p>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+{#            hidden-xs表示xs屏幕状态下隐藏该快#}
+            <div class="hidden-xs col-sm-4 col-md-3 col-lg-2">
+                {#设置博客分类这一块元素的外面版，使用bootstrap的基础面板#}
+                {#链接地址：https://v3.bootcss.com/components/#panels#}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        博客分类
+                    </div>
+                    <div class="panel-body">
+                        {#让每个li列表前面没有小黑点#}
+                        <ul style="list-style-type: none">
+                            {% for blog_type in blog_type %}
+                                <li><a href="{% url 'blog_with_type' blog_type.pk %}">{{ blog_type.blog_type }}</a></li>
+                            {% empty %}
+                                <li>暂无分类</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{#<!doctype html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <meta name="viewport"#}
+{#          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">#}
+{#    <meta http-equiv="X-UA-Compatible" content="ie=edge">#}
+{#    <title>博客文章列表</title>#}
+{#</head>#}
+{#<body>#}
+{#    {% for blog in blogs %}#}
+{#        <!--其中blo_detail为urls.py文件中的name别称-->#}
+{#        <a href="{% url 'blog_detail' blog.pk %}">{{ blog.title }}</a>#}
+{#        <!--利用truncatechars:30过滤器，只显示前30个字符-->#}
+{#        <p>{{ blog.content | truncatechars:50}}</p>#}
+{#    {% empty %}#}
+{#        <!--如果没有获取到内容即for内容为空，则显示下面的内容-->#}
+{#        <p>--暂无博客敬请期待--</p>#}
+{#    {% endfor %}#}
+{#    <!--blog | length计算出可迭代对象长度，即个数-->#}
+{#    <p>一共有{{ blogs | length }}篇博客</p>#}
+{#</body>#}
+{#</html>#}
