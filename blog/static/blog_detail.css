@@ -1,0 +1,13 @@
+div.col-xs-10 ul.blog-info{
+    list-style-type: none;
+    margin-bottom: 1em;
+}
+
+div.col-xs-10 ul.blog-info li{
+    display: inline-block;
+    margin-right: 2em;
+}
+
+div.contend p{
+    text-indent: 2em;
+}

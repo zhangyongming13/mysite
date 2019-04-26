@@ -1,5 +1,11 @@
 <!--extends表示引用名为base.html模板文件-->
 {% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block header_extends %}
+{#    进行头扩展，引入独立的css文件#}
+    <link rel="stylesheet" href="{% static 'blog.css' %}">
+{% endblock %}
 <!--block模块对应base里面的title模块，这里的数据会填充到base.html文件中-->
 {% block title %}
     博客文章列表
@@ -18,19 +24,28 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <!--blog | length计算出可迭代对象长度，即个数-->
-                        博客列表（一共有{{ blogs | length }}篇博客）
+                        {% block blog_list_type %} <!--用于其他html嵌套该模板-->
+                            博客列表（一共有{{ blogs | length }}篇博客）
+                        {% endblock %}
                     </div>
                     <div class="panel-body">
                         {#让每个li列表前面没有小黑点#}
                         <ul style="list-style-type: none">
                             {% for blog in blogs %}
-                                <!--其中blo_detail为urls.py文件中的name别称-->
-                                <a href="{% url 'blog_detail' blog.pk %}">{{ blog.title }}</a>
-                                <!--利用truncatechars:30过滤器，只显示前30个字符-->
-                                <p>{{ blog.content | truncatechars:50}}</p>
+                                <div class="blog">
+                                    <h3><a href="{% url 'blog_detail' blog.pk %}">{{ blog.title }}</a></h3>
+                                    <p class="blog-info">
+                                        <!--使用bootstrap内置的图标类型-->
+                                        <span class="glyphicon glyphicon-tag"><a href="{% url 'blog_with_type' blog.blog_type.pk %}">{{ blog.blog_type }}</a></span>
+                                        <span class="glyphicon glyphicon-time">{{ blog.created_time | date:'Y-m-d' }}</span>
+                                    </p>
+                                    <p>{{ blog.content | truncatechars:120 }}</p>
+                                </div>
                             {% empty %}
-                                <!--如果没有获取到内容即for内容为空，则显示下面的内容-->
-                                <p>--暂无博客敬请期待--</p>
+                                <div class="blog">
+                                    <!--如果没有获取到内容即for内容为空，则显示下面的内容-->
+                                    <h3>--暂无博客敬请期待--</h3>
+                                </div>
                             {% endfor %}
                         </ul>
                     </div>
@@ -46,7 +61,7 @@
                     </div>
                     <div class="panel-body">
                         {#让每个li列表前面没有小黑点#}
-                        <ul style="list-style-type: none">
+                        <ul class="blog-types">
                             {% for blog_type in blog_type %}
                                 <li><a href="{% url 'blog_with_type' blog_type.pk %}">{{ blog_type.blog_type }}</a></li>
                             {% empty %}
@@ -59,27 +74,3 @@
         </div>
     </div>
 {% endblock %}
-
-{#<!doctype html>#}
-{#<html lang="en">#}
-{#<head>#}
-{#    <meta charset="UTF-8">#}
-{#    <meta name="viewport"#}
-{#          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">#}
-{#    <meta http-equiv="X-UA-Compatible" content="ie=edge">#}
-{#    <title>博客文章列表</title>#}
-{#</head>#}
-{#<body>#}
-{#    {% for blog in blogs %}#}
-{#        <!--其中blo_detail为urls.py文件中的name别称-->#}
-{#        <a href="{% url 'blog_detail' blog.pk %}">{{ blog.title }}</a>#}
-{#        <!--利用truncatechars:30过滤器，只显示前30个字符-->#}
-{#        <p>{{ blog.content | truncatechars:50}}</p>#}
-{#    {% empty %}#}
-{#        <!--如果没有获取到内容即for内容为空，则显示下面的内容-->#}
-{#        <p>--暂无博客敬请期待--</p>#}
-{#    {% endfor %}#}
-{#    <!--blog | length计算出可迭代对象长度，即个数-->#}
-{#    <p>一共有{{ blogs | length }}篇博客</p>#}
-{#</body>#}
-{#</html>#}

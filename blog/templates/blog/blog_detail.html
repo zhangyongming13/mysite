@@ -1,4 +1,10 @@
 {% extends 'base.html' %}
+
+{% load staticfiles %}
+{% block header_extends %}
+    <link rel="stylesheet" href="{% static 'blog_detail.css' %}">
+{% endblock %}
+
 {% block title %}
     {{ blog_detail.title }}
 {% endblock %}
@@ -8,14 +14,36 @@
 {% endblock %}
 
 {% block content %}
-    <h2>{{ blog_detail.title }}</h2>
-    <p>作者是：{{ blog_detail.author }}</p>
-    <p>创作时间：{{ blog_detail.created_time | date:'Y-m-d H:n:s' }}</p>
-    <p>博客类型是：
-{#        {{ blog_detail.blog_type.pk }}#}
-        <!--blog_detail.blog_type.pk为传进urls.py的数据-->
-        <a href="{% url 'blog_with_type' blog_detail.blog_type.pk %}">{{ blog_detail.blog_type }}</a>
-    </p>
-    <p>{{ blog_detail.content }}</p>
-    <!--a标签内的href的home式urls文件中对应路径的name名字-->
+<div class="container">
+    <div class="row">
+        <div class="col-xs-10 col-xs-offset-1">
+            <h2>{{ blog_detail.title }}</h2>
+            <ul class="blog-info">
+                <li>作者是：{{ blog_detail.author }}</li>
+                <li>创作时间：{{ blog_detail.created_time | date:'Y-m-d' }}</li>
+                <li>博客类型是：
+                {#{{ blog_detail.blog_type.pk }}#}
+                <!--blog_detail.blog_type.pk为传进urls.py的数据-->
+                <a href="{% url 'blog_with_type' blog_detail.blog_type.pk %}">{{ blog_detail.blog_type }}</a>
+                </li>
+            </ul>
+            <div class="contend">
+                <p>{{ blog_detail.content }}</p>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
+
+{#{% block content %}#}
+{#    <h2>{{ blog_detail.title }}</h2>#}
+{#    <p>作者是：{{ blog_detail.author }}</p>#}
+{#    <p>创作时间：{{ blog_detail.created_time | date:'Y-m-d H:n:s' }}</p>#}
+{#    <p>博客类型是：#}
+{#        {{ blog_detail.blog_type.pk }}#}
+{#        <!--blog_detail.blog_type.pk为传进urls.py的数据-->#}
+{#        <a href="{% url 'blog_with_type' blog_detail.blog_type.pk %}">{{ blog_detail.blog_type }}</a>#}
+{#    </p>#}
+{#    <p>{{ blog_detail.content }}</p>#}
+{#    <!--a标签内的href的home式urls文件中对应路径的name名字-->#}
+{#{% endblock %}#}

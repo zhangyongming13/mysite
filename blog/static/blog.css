@@ -1,0 +1,17 @@
+ul.blog-types {
+    list-style-type: none;
+}
+
+/*设置最后一个不进行下面的操作*/
+div.blog  {
+    margin-bottom: 1em;
+    padding: 1em;
+}
+
+div.blog:not(:last-child){
+    border-bottom: 1px solid #cccccc;
+}
+
+div.blog h3 {
+    margin-top: 0.2em;
+}

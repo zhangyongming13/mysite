@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="/static/base.css">
     <!--创建一个block快，名字叫title，用于其他模块调用的使用填充数据-->
     <title>{% block title %}{% endblock %}</title>
+    {#这里会被填充#}
+    {% block header_extends %}{% endblock %}
 </head>
 <body>
     {#    这是一个导航栏，role='navigation'表示告诉浏览器这是一个导航栏#}

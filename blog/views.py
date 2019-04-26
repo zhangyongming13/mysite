@@ -27,5 +27,6 @@ def Blog_with_type(request, blog_type_pk):
     context['blogs'] = Blog.objects.filter(blog_type=blog_type_name)
     context['blogs_type'] = blog_type_name
     context['blog_type_pk'] = blog_type_pk
+    context['blog_type'] = BlogType.objects.all()
     # 调用模板文件
     return render(request, 'blog/blog_with_type.html', context)
