@@ -25,3 +25,6 @@ class Blog(models.Model):
     # 使后台管理更清晰明了
     def __str__(self):
         return '<blog: %s>' % self.title
+
+    class Meta:
+        ordering = ['-created_time']  # 按照创建时间新到旧进行排序

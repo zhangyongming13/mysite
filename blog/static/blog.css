@@ -15,3 +15,7 @@ div.blog:not(:last-child){
 div.blog h3 {
     margin-top: 0.2em;
 }
+
+div.paginator {
+    text-align: center;
+}
