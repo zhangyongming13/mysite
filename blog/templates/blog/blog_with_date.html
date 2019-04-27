@@ -1,0 +1,12 @@
+{#嵌套已经使用了bootstrap的blog_list.html模板#}
+{#注意相应的for的数据名最好一直#}
+{% extends 'blog/blog_list.html' %}
+{% block title %}
+    {{ blog_with_date }}的博文
+{% endblock %}
+
+{% block blog_list_type %}
+    <div>
+        <h4>类型为:{{ blog_with_date }}的博文如下： <a href="{% url 'blog_list' %}">查看全部的博客</a></h4>
+    </div>
+{% endblock %}

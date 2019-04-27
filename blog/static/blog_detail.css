@@ -11,3 +11,7 @@ div.col-xs-10 ul.blog-info li{
 div.contend p{
     text-indent: 2em;
 }
+
+div.blog_more {
+    margin-top: 1em;
+}

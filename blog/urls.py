@@ -8,4 +8,5 @@ urlpatterns = [
     # http://192.168.1.247:8000/blog/1
     path('<int:blog_pk>', views.Blog_detail, name='blog_detail'),
     path('blog_with_type/<int:blog_type_pk>', views.Blog_with_type, name='blog_with_type'),
+    path('blog_with_date/<int:year>/<int:month>', views.blos_with_date, name='blos_with_date'),
 ]
