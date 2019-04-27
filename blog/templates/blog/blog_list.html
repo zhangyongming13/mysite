@@ -101,7 +101,10 @@
                         {#让每个li列表前面没有小黑点#}
                         <ul class="blog-types">
                             {% for blog_type in blog_type %}
-                                <li><a href="{% url 'blog_with_type' blog_type.pk %}">{{ blog_type.blog_type }}</a></li>
+                                <li>
+                                    <a href="{% url 'blog_with_type' blog_type.pk %}">
+                                        {{ blog_type.blog_type }}({{ blog_type.blog_count }})
+                                    </a></li>
                             {% empty %}
                                 <li>暂无分类</li>
                             {% endfor %}
@@ -116,7 +119,9 @@
                         {#让每个li列表前面没有小黑点#}
                         <ul class="blog-date">
                             {% for blog_date in blog_date %}
-                                <a href="{% url 'blos_with_date' blog_date.year blog_date.month %}">{{ blog_date | date:'Y年m月' }}</a>
+                                <a href="{% url 'blos_with_date' blog_date.year blog_date.month %}">
+                                    {{ blog_date | date:'Y年m月' }}
+                                </a>
                             {% empty %}
                                 <li>暂无分类</li>
                             {% endfor %}
