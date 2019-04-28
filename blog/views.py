@@ -37,6 +37,15 @@ def get_common_blog_data(request, blogs_all_list):
     #     i.blog_count = Blog.objects.filter(blog_type=i).count()
     #     blog_types_list.append(i)
 
+    # 获取时间对应的博客数量
+    blog_date = Blog.objects.dates('created_time', 'month', order='DESC')
+    blog_date_dict = {}
+    # i为年和月组成的日期分类
+    for i in blog_date:
+        blog_count = Blog.objects.filter(created_time__year=i.year, created_time__month=i.month).count()
+        # 利用字典保存该日期分类对应的数量，后面for循环取出的时候要添加items
+        blog_date_dict[i] = blog_count
+
     context['total_page'] = paginator.num_pages  # 总共有多少页
     context['page_list'] = page_list  # 页码列表
     context['page_of_blogs'] = page_of_blogs  # 该页博客的内容
@@ -44,7 +53,7 @@ def get_common_blog_data(request, blogs_all_list):
     # context['blog_type'] = BlogType.objects.all()  # 获取所有的类型
     context['blog_count'] = paginator.count  # 博客的总数
     # 返回一个年月的日期
-    context['blog_date'] = Blog.objects.dates('created_time', 'month', order='DESC')
+    context['blog_date'] = blog_date_dict
     return context
 
 
