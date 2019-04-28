@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from blog.views import Blog_list
 from .views import home
 
@@ -24,4 +26,7 @@ urlpatterns = [
     # 结合Django根目录的urls文件，整个访问网址是
     #  http://192.168.1.247:8000/blog/1
     path('blog/', include('blog.urls')),  # 将App内创建的urls利用include进行引入
+    path('ckeditor', include('ckeditor_uploader.urls')),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

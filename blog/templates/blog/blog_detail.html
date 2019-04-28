@@ -28,7 +28,7 @@
                 </li>
             </ul>
             <div class="contend">
-                <p>{{ blog_detail.content }}</p>
+                <p>{{ blog_detail.content | safe }}</p>
             </div>
             <div class="blog_more">
                 {% if previous_blog %}

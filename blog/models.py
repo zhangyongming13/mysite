@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 # 创建Blog_Type模型
@@ -15,7 +16,7 @@ class Blog(models.Model):
     title = models.CharField(max_length=50)
     # 博文的类型作为一个外键引入到Blog模型中
     blog_type = models.ForeignKey(BlogType, on_delete=models.DO_NOTHING)
-    content = models.TextField()
+    content = RichTextUploadingField()
     # 利用django自带的用户认证模型为新闻添加作者，on_delete表示文章删除的时候对关联对应的作者的操作，这里式不做任何操作
     author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     created_time = models.DateTimeField(auto_now_add=True)
