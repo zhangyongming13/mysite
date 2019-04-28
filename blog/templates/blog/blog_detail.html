@@ -26,6 +26,7 @@
                 <!--blog_detail.blog_type.pk为传进urls.py的数据-->
                 <a href="{% url 'blog_with_type' blog_detail.blog_type.pk %}">{{ blog_detail.blog_type }}</a>
                 </li>
+                <li>阅读次数：{{ blog_detail.readed_num }}</li>
             </ul>
             <div class="contend">
                 <p>{{ blog_detail.content | safe }}</p>

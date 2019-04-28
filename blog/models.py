@@ -22,6 +22,8 @@ class Blog(models.Model):
     created_time = models.DateTimeField(auto_now_add=True)
     last_update_time = models.DateTimeField(auto_now=True)
     is_delete = models.BooleanField(default=False)
+    # 记录阅读次数的字段
+    readed_num = models.IntegerField(default=0)
 
     # 使后台管理更清晰明了
     def __str__(self):

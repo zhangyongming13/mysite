@@ -87,7 +87,16 @@ def blos_with_date(request, year, month):
 def Blog_detail(request, blog_pk):
     context = {}
     blog_detail = get_object_or_404(Blog, pk=blog_pk)
+    # 每一次请求就进行阅读数加1操作
+    if not request.COOKIES.get('blog_%s_readed' % blog_pk):
+        blog_detail.readed_num += 1
+        blog_detail.save()
+
     context['previous_blog'] = Blog.objects.filter(created_time__gt=blog_detail.created_time).last()
     context['next_blog'] = Blog.objects.filter(created_time__lt=blog_detail.created_time).first()
     context['blog_detail'] = blog_detail
-    return render(request, 'blog/blog_detail.html', context)
+    response = render(request, 'blog/blog_detail.html', context)
+
+    # 设置发送给浏览器的cookie内容，cookie超时时间默认值，或者浏览器关闭的时候cookie才会失效
+    response.set_cookie('blog_%s_readed' % blog_pk, 'true')
+    return response

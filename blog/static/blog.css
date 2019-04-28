@@ -19,3 +19,7 @@ div.blog h3 {
 div.paginator {
     text-align: center;
 }
+
+p.blog-info span {
+    margin-right: 1em;
+}
