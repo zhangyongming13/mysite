@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from ckeditor_uploader.fields import RichTextUploadingField
+from django.db.models.fields import exceptions
 
 
 # 创建Blog_Type模型
@@ -23,7 +24,14 @@ class Blog(models.Model):
     last_update_time = models.DateTimeField(auto_now=True)
     is_delete = models.BooleanField(default=False)
     # 记录阅读次数的字段
-    readed_num = models.IntegerField(default=0)
+    # readed_num = models.IntegerField(default=0)
+
+    # 设置独立的方法返回阅读数量
+    def get_read_num(self):
+        try:
+            return self.readnum.read_num
+        except exceptions.ObjectDoesNotExist:
+            return 0
 
     # 使后台管理更清晰明了
     def __str__(self):
@@ -31,3 +39,10 @@ class Blog(models.Model):
 
     class Meta:
         ordering = ['-created_time']  # 按照创建时间新到旧进行排序
+
+
+# 新建独立计数模型
+class ReadNum(models.Model):
+    read_num = models.IntegerField(default=0)
+    # 外键关联blog，因为计数功能可能用在其他的app，所以这里要blog当外键
+    blog = models.OneToOneField(Blog, on_delete=models.DO_NOTHING)

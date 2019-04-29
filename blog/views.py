@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
-from .models import Blog, BlogType
+from .models import Blog, BlogType, ReadNum
 from django.db.models import Count
 from django.conf import settings
 # Create your views here.
@@ -89,8 +89,15 @@ def Blog_detail(request, blog_pk):
     blog_detail = get_object_or_404(Blog, pk=blog_pk)
     # 每一次请求就进行阅读数加1操作
     if not request.COOKIES.get('blog_%s_readed' % blog_pk):
-        blog_detail.readed_num += 1
-        blog_detail.save()
+        if ReadNum.objects.filter(blog=blog_detail).count():
+            # blog里面已经存在香港的计数记录了
+            readnum = ReadNum.objects.get(blog=blog_detail)
+        else:
+            # 不存在相关的计数记录
+            readnum = ReadNum
+            readnum.blog = blog_detail
+        readnum.read_num += 1
+        readnum.save()
 
     context['previous_blog'] = Blog.objects.filter(created_time__gt=blog_detail.created_time).last()
     context['next_blog'] = Blog.objects.filter(created_time__lt=blog_detail.created_time).first()
