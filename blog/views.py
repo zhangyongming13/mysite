@@ -94,7 +94,7 @@ def Blog_detail(request, blog_pk):
             readnum = ReadNum.objects.get(blog=blog_detail)
         else:
             # 不存在相关的计数记录
-            readnum = ReadNum
+            readnum = ReadNum()
             readnum.blog = blog_detail
         readnum.read_num += 1
         readnum.save()
