@@ -2,8 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.contenttypes.models import ContentType
-from read_statistics.models import ReadNum
-from django.db.models.fields import exceptions
+from read_statistics.models import ReadNum, ReadNum_Expand_Methon
 
 
 # 创建Blog_Type模型
@@ -15,7 +14,7 @@ class BlogType(models.Model):
 
 
 # 创建博文对应的模型
-class Blog(models.Model):
+class Blog(models.Model, ReadNum_Expand_Methon):
     title = models.CharField(max_length=50)
     # 博文的类型作为一个外键引入到Blog模型中
     blog_type = models.ForeignKey(BlogType, on_delete=models.DO_NOTHING)
@@ -34,16 +33,6 @@ class Blog(models.Model):
     #         return self.readnum.read_num
     #     except exceptions.ObjectDoesNotExist:
     #         return 0
-
-    def get_read_num(self):
-        try:
-            # 获取具体记录blog数据的ContentType
-            ct = ContentType.objects.get_for_model(self)
-            # 获取到ContentType里面具体博客（pk确定）的ReadNum（存有相应阅读数），ReadNum.read_num为具体阅读数
-            readnum = ReadNum.objects.get(content_type=ct, object_id=self.pk)
-            return readnum.read_num
-        except exceptions.ObjectDoesNotExist:
-            return 0
 
     # 使后台管理更清晰明了
     def __str__(self):

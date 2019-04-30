@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.db.models.fields import exceptions
 
 
 # 官方文档里面通用关系https://docs.djangoproject.com/zh-hans/2.1/ref/contrib/contenttypes/
@@ -12,3 +13,15 @@ class ReadNum(models.Model):
     object_id = models.PositiveIntegerField()
     # 通过外键直接获取上面的信息
     content_object = GenericForeignKey('content_type', 'object_id')
+
+
+class ReadNum_Expand_Methon():
+    def get_read_num(self):
+        try:
+            # 获取具体记录blog数据的ContentType
+            ct = ContentType.objects.get_for_model(self)
+            # 获取到ContentType里面具体博客（pk确定）的ReadNum（存有相应阅读数），ReadNum.read_num为具体阅读数
+            readnum = ReadNum.objects.get(content_type=ct, object_id=self.pk)
+            return readnum.read_num
+        except exceptions.ObjectDoesNotExist:
+            return 0

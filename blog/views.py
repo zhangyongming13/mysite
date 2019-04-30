@@ -3,8 +3,7 @@ from django.core.paginator import Paginator
 from .models import Blog, BlogType
 from django.db.models import Count
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
-from read_statistics.models import ReadNum
+from read_statistics.utils import read_statistics_add_times
 # Create your views here.
 
 
@@ -102,14 +101,9 @@ def Blog_detail(request, blog_pk):
         # readnum.save()
         # pass
     # 创建独立的APP用来计数（这里是记录阅读数）的修改方式
-    if not request.COOKIES.get('blog_%s_readed' % blog_pk):
-        ct = ContentType.objects.get_for_model(blog_detail)
-        if ReadNum.objects.filter(content_type=ct, object_id=blog_pk).count():
-            readnum = ReadNum.objects.get(content_type=ct, object_id=blog_pk)
-        else:
-            readnum = ReadNum(content_type=ct, object_id=blog_pk)
-        readnum.read_num += 1
-        readnum.save()
+
+    # 调用计数模块里面的方法进行博客阅读数的增加
+    read_statistics_add_times(request, blog_detail, blog_pk)
 
     context['previous_blog'] = Blog.objects.filter(created_time__gt=blog_detail.created_time).last()
     context['next_blog'] = Blog.objects.filter(created_time__lt=blog_detail.created_time).first()
