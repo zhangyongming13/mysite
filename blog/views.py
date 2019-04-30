@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator
-from .models import Blog, BlogType, ReadNum
+from .models import Blog, BlogType
 from django.db.models import Count
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
+from read_statistics.models import ReadNum
 # Create your views here.
 
 
@@ -87,15 +89,25 @@ def blos_with_date(request, year, month):
 def Blog_detail(request, blog_pk):
     context = {}
     blog_detail = get_object_or_404(Blog, pk=blog_pk)
-    # 每一次请求就进行阅读数加1操作
+    # 每一次请求就进行阅读数加1操作，这是在模型中直接添加ReadNum计数阅读数量计数
+    # if not request.COOKIES.get('blog_%s_readed' % blog_pk):
+        # if ReadNum.objects.filter(blog=blog_detail).count():
+        #     # blog里面已经存在香港的计数记录了
+        #     readnum = ReadNum.objects.get(blog=blog_detail)
+        # else:
+        #     # 不存在相关的计数记录
+        #     readnum = ReadNum()
+        #     readnum.blog = blog_detail
+        # readnum.read_num += 1
+        # readnum.save()
+        # pass
+    # 创建独立的APP用来计数（这里是记录阅读数）的修改方式
     if not request.COOKIES.get('blog_%s_readed' % blog_pk):
-        if ReadNum.objects.filter(blog=blog_detail).count():
-            # blog里面已经存在香港的计数记录了
-            readnum = ReadNum.objects.get(blog=blog_detail)
+        ct = ContentType.objects.get_for_model(blog_detail)
+        if ReadNum.objects.filter(content_type=ct, object_id=blog_pk).count():
+            readnum = ReadNum.objects.get(content_type=ct, object_id=blog_pk)
         else:
-            # 不存在相关的计数记录
-            readnum = ReadNum()
-            readnum.blog = blog_detail
+            readnum = ReadNum(content_type=ct, object_id=blog_pk)
         readnum.read_num += 1
         readnum.save()
 

@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from ckeditor_uploader.fields import RichTextUploadingField
+from django.contrib.contenttypes.models import ContentType
+from read_statistics.models import ReadNum
 from django.db.models.fields import exceptions
 
 
@@ -27,9 +29,19 @@ class Blog(models.Model):
     # readed_num = models.IntegerField(default=0)
 
     # 设置独立的方法返回阅读数量
+    # def get_read_num(self):
+    #     try:
+    #         return self.readnum.read_num
+    #     except exceptions.ObjectDoesNotExist:
+    #         return 0
+
     def get_read_num(self):
         try:
-            return self.readnum.read_num
+            # 获取具体记录blog数据的ContentType
+            ct = ContentType.objects.get_for_model(self)
+            # 获取到ContentType里面具体博客（pk确定）的ReadNum（存有相应阅读数），ReadNum.read_num为具体阅读数
+            readnum = ReadNum.objects.get(content_type=ct, object_id=self.pk)
+            return readnum.read_num
         except exceptions.ObjectDoesNotExist:
             return 0
 
@@ -42,7 +54,7 @@ class Blog(models.Model):
 
 
 # 新建独立计数模型
-class ReadNum(models.Model):
-    read_num = models.IntegerField(default=0)
-    # 外键关联blog，因为计数功能可能用在其他的app，所以这里要blog当外键
-    blog = models.OneToOneField(Blog, on_delete=models.DO_NOTHING)
+# class ReadNum(models.Model):
+#     read_num = models.IntegerField(default=0)
+#     # 外键关联blog，因为计数功能可能用在其他的app，所以这里要blog当外键
+#     blog = models.OneToOneField(Blog, on_delete=models.DO_NOTHING)
