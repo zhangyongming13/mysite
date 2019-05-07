@@ -1,8 +1,13 @@
 h3.home_content {
-            font-size: 180%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            /*{#transform: translate(-50%, -50%)使元素左偏移宽度的一半，上偏移一半#}*/
-            transform: translate(-50%, -50%);
-        }
+    font-size: 180%;
+    text-align: center;
+    margin-top: 4em;
+    margin-bottom: 2em;
+}
+
+div#container {
+    margin: 0 auto;
+    height: 20em;
+    min-width: 20em;
+    max-width: 30em;
+}

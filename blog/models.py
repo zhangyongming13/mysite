@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.contenttypes.models import ContentType
-from read_statistics.models import ReadNum, ReadNum_Expand_Methon
+from read_statistics.models import ReadNum, ReadNumExpandMethod
 
 
 # 创建Blog_Type模型
@@ -14,7 +14,7 @@ class BlogType(models.Model):
 
 
 # 创建博文对应的模型
-class Blog(models.Model, ReadNum_Expand_Methon):
+class Blog(models.Model, ReadNumExpandMethod):
     title = models.CharField(max_length=50)
     # 博文的类型作为一个外键引入到Blog模型中
     blog_type = models.ForeignKey(BlogType, on_delete=models.DO_NOTHING)
