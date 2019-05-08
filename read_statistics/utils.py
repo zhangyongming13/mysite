@@ -3,6 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from read_statistics.models import ReadNum, ReadDetail
 from django.db.models import Sum
+from blog.models import Blog
 
 
 # 当被调用的时候，说明该博文被阅读了一次，所以要进行阅读数加1的操作
@@ -45,3 +46,33 @@ def get_seven_days_data(content_type):
         result = rds.aggregate(read_num_sum=Sum('read_num'))
         read_nums.append(result['read_num_sum'] or 0)
     return read_nums, day
+
+
+# 获取今天或者昨天访问数据的方法
+def get_today_or_yesterday_hot_blogs(content_type, day_flag):
+    today = timezone.now().date()
+    if day_flag == 'yesterday':
+        today = today - datetime.timedelta(days=1)
+    # 利用ContentType的反向api功能访问统计数据
+    # values表示Blog需要传递出去的值
+    # annotate表示对数据进行聚合
+    today_hot_blogs = Blog.objects.filter(read_details__date=today) \
+                                  .values('id', 'title') \
+                                  .annotate(read_num_sum=Sum('read_details__read_num')) \
+                                  .order_by('-read_num_sum')[:4]
+    # today_hot_blogs = ReadDetail.objects.filter(content_type=content_type, date=today).order_by('-read_num')[:4]
+    return today_hot_blogs
+
+
+# 获取七日或者30天内访问数据的方法
+def get_week_or_month_hot_blogs(flag):
+    today = timezone.now().date()
+    if flag == 'week':
+        date = today - datetime.timedelta(days=7)
+    elif flag == 'month':
+        date = today - datetime.timedelta(days=30)
+    blogs = Blog.objects.filter(read_details__date__lte=today, read_details__date__gt=date) \
+                        .values('id', 'title') \
+                        .annotate(read_num_sum=Sum('read_details__read_num')) \
+                        .order_by('-read_num_sum')[:4]
+    return blogs

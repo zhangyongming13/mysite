@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.contenttypes.models import ContentType
-from read_statistics.models import ReadNum, ReadNumExpandMethod
+from read_statistics.models import ReadNum, ReadNumExpandMethod, ReadDetail
+from django.contrib.contenttypes.fields import GenericRelation
 
 
 # 创建Blog_Type模型
@@ -15,6 +16,8 @@ class BlogType(models.Model):
 
 # 创建博文对应的模型
 class Blog(models.Model, ReadNumExpandMethod):
+    # 创建反向的api，这样blog就可以直接访问read_detail里面的read_num
+    read_details = GenericRelation(ReadDetail)
     title = models.CharField(max_length=50)
     # 博文的类型作为一个外键引入到Blog模型中
     blog_type = models.ForeignKey(BlogType, on_delete=models.DO_NOTHING)

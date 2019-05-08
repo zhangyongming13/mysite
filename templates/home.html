@@ -20,6 +20,64 @@
     <div id="container"></div>
     <!-- 引入 highcharts.js -->
     <script src="http://cdn.highcharts.com.cn/highcharts/highcharts.js"></script>
+    <div class="hot-date">
+        <h3>今日阅读热点</h3>
+        <ul>
+            {% for hot_blogs in today_hot_blogs %}
+                <li><a href="{% url "blog_detail" hot_blogs.id %}">{{ hot_blogs.title }}</a>({{ hot_blogs.read_num_sum }})</li>
+            {% empty %}
+                <li>今天暂无热门博客</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="hot-date">
+        <h3>昨日阅读热点</h3>
+        <ul>
+            {% for hot_blogs in yesterday_hot_blogs %}
+                <li><a href="{% url "blog_detail" hot_blogs.id %}">{{ hot_blogs.title }}</a>({{ hot_blogs.read_num_sum }})</li>
+            {% empty %}
+                <li>昨日暂无热门博客</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="hot-date">
+        <h3>七日阅读热点</h3>
+        <ul>
+            {% for hot_blogs in week_hot_blogs %}
+                <li><a href="{% url "blog_detail" hot_blogs.id %}">{{ hot_blogs.title }}</a>({{ hot_blogs.read_num_sum }})</li>
+            {% empty %}
+                <li>七日暂无热门博客</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="hot-date">
+        <h3>一个月阅读热点</h3>
+        <ul>
+            {% for hot_blogs in week_hot_blogs %}
+                <li><a href="{% url "blog_detail" hot_blogs.id %}">{{ hot_blogs.title }}</a>({{ hot_blogs.read_num_sum }})</li>
+            {% empty %}
+                <li>一个月暂无热门博客</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+{#    <h3>今日阅读热点</h3>#}
+{#    <ul>#}
+{#        {% for hot_blogs in today_hot_blogs %}#}
+{#            <li><a href="{% url "blog_detail" hot_blogs.content_object.pk %}">{{ hot_blogs.content_object.title }}</a>({{ hot_blogs.read_num }})</li>#}
+{#        {% empty %}#}
+{#            <li>今天暂无热门博客</li>#}
+{#        {% endfor %}#}
+{#    </ul>#}
+{#    <h3>昨日阅读热点</h3>#}
+{#    <ul>#}
+{#        {% for hot_blogs in yesterday_hot_blogs %}#}
+{#            <li><a href="{% url "blog_detail" hot_blogs.id %}">{{ hot_blogs.title }}</a>({{ hot_blogs.read_num_sum }})</li>#}
+{#        {% empty %}#}
+{#            <li>昨日暂无热门博客</li>#}
+{#        {% endfor %}#}
+{#    </ul>#}
     <script>
         // 图表配置
         var options = {
@@ -32,6 +90,7 @@
             xAxis: {
                 categories: {{ day | safe}},   // x 轴分类
                 tickmarkPlacement: 'on',
+                title: {text:'前7日阅读量变化'},
             },
             yAxis: {
                 title: {
