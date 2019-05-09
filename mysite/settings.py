@@ -145,3 +145,25 @@ CACHES = {
         'LOCATION': 'my_cache_table',
     }
 }
+
+# ckeditor
+CKEDITOR_CONFIGS = {
+    'my_config': {
+        'toolbar': (['div', 'Source', '-', 'Save', 'NewPage', 'Preview', '-', 'Templates'],
+                    ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Print', 'SpellChecker', 'Scayt'],
+                    ['Undo', 'Redo', '-', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat', '-', 'Maximize',
+                     'ShowBlocks', '-', "CodeSnippet", 'Subscript', 'Superscript'],
+                    ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
+                     'HiddenField'],
+                    ['Bold', 'Italic', 'Underline', 'Strike', '-'],
+                    ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote'],
+                    ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+                    ['Link', 'Unlink', 'Anchor'],
+                    ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak'],
+                    ['Styles', 'Format', 'Font', 'FontSize'],
+                    ['TextColor', 'BGColor'],
+
+                    ),
+        'extraPlugins': 'codesnippet',
+    }
+}
