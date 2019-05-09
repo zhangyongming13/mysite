@@ -39,7 +39,7 @@
                                         <span class="glyphicon glyphicon-time">{{ blog.created_time | date:'Y-m-d' }}</span>
                                         <span>阅读次数：{{ blog.get_read_num }}</span>
                                     </p>
-                                    <p>{{ blog.content | striptags | truncatechars:120 }}</p>
+                                    <p>{{ blog.content | striptags | safe | truncatechars:120 }}</p>
                                 </div>
                             {% empty %}
                                 <div class="blog">
@@ -121,9 +121,11 @@
                         <ul class="blog-date">
 {#                            # for循环的是一个dict字典，因为要把字典的key和value都取出来，所以要加items#}
                             {% for blog_date, blog_date_count in blog_date.items %}
-                                <a href="{% url 'blos_with_date' blog_date.year blog_date.month %}">
-                                    {{ blog_date | date:'Y年m月' }}({{ blog_date_count }})
-                                </a>
+                                <li>
+                                    <a href="{% url 'blos_with_date' blog_date.year blog_date.month %}">
+                                        {{ blog_date | date:'Y年m月' }}({{ blog_date_count }})
+                                    </a>
+                                </li>
                             {% empty %}
                                 <li>暂无分类</li>
                             {% endfor %}
