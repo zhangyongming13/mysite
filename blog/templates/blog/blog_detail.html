@@ -52,6 +52,27 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-xs-10 col-xs-offset-1">
+            <div style="margin-top: 2em;border:1px dashed;padding: 2em">
+                提交评论区域
+                {% if request.user.is_authenticated %}  <!--判断是否已经登录-->
+                    <p>已登录，登录名：{{ request.user }}</p>
+{#                    <a href="/admin/logout">注销</a>#}
+                {% else %}
+                    未登录
+                    <!--进行登录操作-->
+                    <form action="{% url 'login' %}" method="post">  <!--将数据传到login这个网页路径中-->
+                        {% csrf_token %}  <!--csrf令牌，避免被拦截-->
+                        <input type="text" name="username">
+                        <input type="password" name="password">
+                        <input type="submit" value="登录">
+                    </form>
+                {% endif %}
+            </div>
+            <div style="margin-top: 2em;border:1px dashed;padding: 2em">评论列表区域</div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 

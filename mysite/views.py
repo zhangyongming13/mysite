@@ -1,8 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from read_statistics.utils import get_seven_days_data, get_today_or_yesterday_hot_blogs, get_week_or_month_hot_blogs
 from django.contrib.contenttypes.models import ContentType
 from blog.models import Blog
 from django.core.cache import cache
+from django.contrib import auth
 
 
 # 首页的处理函数
@@ -57,3 +58,16 @@ def home(request):
     context['week_hot_blogs'] = week_hot_blogs
     context['month_hot_blogs'] = month_hot_blogs
     return render(request, 'home.html', context)
+
+
+def login(request):
+    # 获取前端post进来的数据，获取不到设置为空
+    username = request.POST.get('username', '')
+    password = request.POST.get('password', '')
+    # 判断用户名和密码是否正确，使用django自带的用户系统以及认证
+    user = auth.authenticate(request, username=username, password=password)
+    if user is not None:
+        auth.login(request, user)
+        return redirect('home')  # 登录成功，跳转到首页
+    else:
+        return render(request, 'error.html', {'message':'用户名或密码不正确！'})
