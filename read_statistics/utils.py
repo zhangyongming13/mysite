@@ -1,4 +1,4 @@
-import datetime
+import datetime, pytz
 from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 from read_statistics.models import ReadNum, ReadDetail
@@ -35,7 +35,9 @@ def read_statistics_add_times(request, blog, blog_pk):
 
 # 返回最近七天每一天的访问数
 def get_seven_days_data(content_type):
-    today = timezone.now().date()
+    now = timezone.now()
+    # 切换本地的时区
+    today = timezone.localtime(now).date()
     read_nums = []
     day = []
     for i in range(6, -1, -1):
@@ -50,7 +52,9 @@ def get_seven_days_data(content_type):
 
 # 获取今天或者昨天访问数据的方法
 def get_today_or_yesterday_hot_blogs(content_type, day_flag):
-    today = timezone.now().date()
+    now = timezone.now()
+    # 切换本地的时区
+    today = timezone.localtime(now).date()
     if day_flag == 'yesterday':
         today = today - datetime.timedelta(days=1)
     # 利用ContentType的反向api功能访问统计数据
@@ -66,7 +70,9 @@ def get_today_or_yesterday_hot_blogs(content_type, day_flag):
 
 # 获取七日或者30天内访问数据的方法
 def get_week_or_month_hot_blogs(flag):
-    today = timezone.now().date()
+    now = timezone.now()
+    # 切换本地的时区
+    today = timezone.localtime(now).date()
     if flag == 'week':
         date = today - datetime.timedelta(days=7)
     elif flag == 'month':
