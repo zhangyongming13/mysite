@@ -71,3 +71,8 @@ def login(request):
         return redirect('home')  # 登录成功，跳转到首页
     else:
         return render(request, 'error.html', {'message':'用户名或密码不正确！'})
+
+
+def logout(request):
+    auth.logout(request)
+    return redirect('home')  # 登录成功，跳转到首页

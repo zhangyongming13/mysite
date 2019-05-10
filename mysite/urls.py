@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from blog.views import Blog_list
-from .views import home, login
+from .views import home, login, logout
 
 urlpatterns = [
     path('', home, name='home'),  # 根目录，把之前的博客列表换成这个
@@ -13,6 +13,7 @@ urlpatterns = [
     path('blog/', include('blog.urls')),  # 将App内创建的urls利用include进行引入
     path('ckeditor', include('ckeditor_uploader.urls')),  # # 上传图片的url
     path('login', login, name='login'),
+    path('logout', logout, name='logout'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
