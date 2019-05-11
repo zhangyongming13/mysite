@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 {#另外一种引入css固态文件的方法#}
 {% load staticfiles %}
+
+{% block header_extends %}
+    <link rel="stylesheet" href="{% static 'login_logout_error.css' %}">
+{% endblock %}
+
 {% block title %}
     我的网站
 {% endblock %}
@@ -10,7 +15,11 @@
 {% endblock %}
 
 {% block content %}
-    <p>{{ message }}还有<span id="sp">4</span>秒跳转到原来的界面...</p>
+    <div class="skip_infomation">
+        <p>
+        {{ message }}还有<span id="sp">4</span>秒跳转到原来的界面...
+        <a href="{{ redirect_to }}">立即跳转！</a>
+    </p>
     <script>
         onload=function () {
             setInterval(go,1000)
@@ -26,5 +35,5 @@
             x--;
         }
     </script>
-    <a href="{{ redirect_to }}">立即跳转！</a>
+    </div>
 {% endblock %}
