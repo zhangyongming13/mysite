@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from read_statistics.utils import get_seven_days_data, get_today_or_yesterday_hot_blogs, get_week_or_month_hot_blogs
 from django.contrib.contenttypes.models import ContentType
 from blog.models import Blog
 from django.core.cache import cache
 from django.contrib import auth
+from .forms import LoginForm
 
 
 # 首页的处理函数
@@ -61,20 +62,26 @@ def home(request):
 
 
 def login(request):
-    referer = request.META.get('HTTP_REFERER', 'home')
-    # 获取前端post进来的数据，获取不到设置为空
-    username = request.POST.get('username', '')
-    password = request.POST.get('password', '')
-    # 判断用户名和密码是否正确，使用django自带的用户系统以及认证
-    user = auth.authenticate(request, username=username, password=password)
-
-    # 获取到request请求头里面原本的网址信息，这样登录之后就跳回原来未登录前的页面
-    referer = request.META.get('HTTP_REFERER', 'home')
-    if user is not None:
-        auth.login(request, user)
-        return render(request, 'login_logout_error.html', {'message': '登录成功！', 'redirect_to':referer})  # 登录成功，跳转到首页
+    # 因为在其他页面点击登录之后是get这个login页面，但是login页面提交数据的时候也是访问
+    # 该页面所以，这里要根据是POST或者GET来来编写不同的方法
+    # POST方法，提交数据
+    if request.method == 'POST':
+        login_form = LoginForm(request.POST)
+        # 提交的数据没有问题，进行登录操作
+        if login_form.is_valid():
+            # user已经在form表单中进行进行验证，直接登录
+            user = login_form.cleaned_data['user']
+            auth.login(request, user)
+            # 根据进入login前的页面（也就是博客的具体页面）传入的链接，登录成功之后就返回博客
+            return redirect(request.GET.get('from', reverse('home')))
     else:
-        return render(request, 'login_logout_error.html', {'message': '用户名或密码不正确！', 'redirect_to':referer})
+        # get方法利用form表单生成对应input用于用户输入login_form
+        # 实例化一个LoginForm类
+        login_form = LoginForm()
+    # 除非是登录成功，不然都会回到login页面，如果是在POST中，这个login_form就会携带有错误信息
+    context = {}
+    context['login_form'] = login_form
+    return render(request, 'login.html', context)
 
 
 def logout(request):

@@ -77,15 +77,8 @@
                     </form>
                 {% else %}
                     <h4>未登录，请登录再评论！</h4>
-                    <!--进行登录操作-->
-                    <form action="{% url 'login' %}" method="post">  <!--将数据传到login这个网页路径中-->
-                        {% csrf_token %}  <!--csrf令牌，避免被拦截-->
-                        <span>用户名：</span>
-                        <input type="text" name="username">
-                        <span>密码：</span>
-                        <input type="password" name="password">
-                        <input type="submit" value="登录">
-                    </form>
+                    <!--进行登录操作，并且将目前网页的路径传给login页面，方便登录完毕之后跳转回来-->
+                    <a href="{% url 'login' %}?from={{ request.get_full_path }}">登录</a>
                 {% endif %}
             </div>
             <div class="comment-area">
