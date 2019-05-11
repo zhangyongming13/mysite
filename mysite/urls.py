@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from blog.views import Blog_list
 from .views import home, login, logout
 
 urlpatterns = [
@@ -14,6 +13,7 @@ urlpatterns = [
     path('ckeditor', include('ckeditor_uploader.urls')),  # # 上传图片的url
     path('login', login, name='login'),
     path('logout', logout, name='logout'),
+    path('comment/', include('comment.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

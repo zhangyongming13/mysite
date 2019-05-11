@@ -57,14 +57,32 @@
             <div class="comment-area">
                 <h3 class="comment-area-title">提交评论</h3>
                 {% if request.user.is_authenticated %}  <!--判断是否已经登录-->
-                    <p>已登录，登录名：{{ request.user }}</p>
-                    <a href="{% url 'logout' %}">注销</a>
+                    <!--这里的url是后面创建的用于前端向后台提交数据的-->
+                    <form action="{% url 'update_comment' %}" method="post">
+                    {% csrf_token %}
+                        <!--使用bootstrap样式form-group，base.html已经引入bootstrap-->
+                        <!--向后端返回的数据-->
+                        <div class="form-group">
+                            <label for="comment_text">
+                                <p>{{ request.user }}, 欢迎评论！</p>
+                                <a href="{% url 'logout' %}">注销</a>
+                            </label>
+                            <textarea class="form-control" name="text" id="comment_text" cols="80" rows="4"></textarea>
+                        </div>
+                        <!--评论的模型是ContentType，所以传进object_id和ContentType来确认该评论对应哪一篇博客-->
+                        <input type="hidden" name="object_id" value="{{ blog_detail.pk }}">
+                        <!--这里传到后端的是字符串，而不是blog_detail这个博客数据-->
+                        <input type="hidden" name="content_type" value="blog">
+                        <input type="submit" value="提交评论" class="btn btn-primary" style="float: right">
+                    </form>
                 {% else %}
-                    未登录
+                    <h4>未登录，请登录再评论！</h4>
                     <!--进行登录操作-->
                     <form action="{% url 'login' %}" method="post">  <!--将数据传到login这个网页路径中-->
                         {% csrf_token %}  <!--csrf令牌，避免被拦截-->
+                        <span>用户名：</span>
                         <input type="text" name="username">
+                        <span>密码：</span>
                         <input type="password" name="password">
                         <input type="submit" value="登录">
                     </form>
@@ -72,6 +90,15 @@
             </div>
             <div class="comment-area">
                 <h3 class="comment-area-title">评论列表</h3>
+                {% for comment in comments %}
+                    <div class="comment-text">
+                        {{ comment.user }}
+                        ({{ comment.comment_time }}):
+                        {{ comment.text }}
+                    </div>
+                {% empty %}
+                    <p>暂无评论，评论一个？</p>
+                {% endfor %}
             </div>
         </div>
     </div>

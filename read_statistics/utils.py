@@ -28,7 +28,10 @@ def read_statistics_add_times(request, blog, blog_pk):
         #     readdetail = ReadDetail(content_type=ct, object_id=blog_pk, data=timezone.now().date())
 
         # date()表示只需要取出对应的时间，当天的阅读数页
-        readdetail, created = ReadDetail.objects.get_or_create(content_type=ct, object_id=blog_pk, date=timezone.now().date())
+        now = timezone.now()
+        # 切换本地的时区
+        today = timezone.localtime(now).date()
+        readdetail, created = ReadDetail.objects.get_or_create(content_type=ct, object_id=blog_pk, date=today)
         readdetail.read_num += 1
         readdetail.save()
 

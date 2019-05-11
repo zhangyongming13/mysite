@@ -61,18 +61,25 @@ def home(request):
 
 
 def login(request):
+    referer = request.META.get('HTTP_REFERER', 'home')
     # 获取前端post进来的数据，获取不到设置为空
     username = request.POST.get('username', '')
     password = request.POST.get('password', '')
     # 判断用户名和密码是否正确，使用django自带的用户系统以及认证
     user = auth.authenticate(request, username=username, password=password)
+
+    # 获取到request请求头里面原本的网址信息，这样登录之后就跳回原来未登录前的页面
+    referer = request.META.get('HTTP_REFERER', 'home')
     if user is not None:
         auth.login(request, user)
-        return redirect('home')  # 登录成功，跳转到首页
+        return render(request, 'login_logout_error.html', {'message': '登录成功！', 'redirect_to':referer})  # 登录成功，跳转到首页
     else:
-        return render(request, 'error.html', {'message':'用户名或密码不正确！'})
+        return render(request, 'login_logout_error.html', {'message': '用户名或密码不正确！', 'redirect_to':referer})
 
 
 def logout(request):
     auth.logout(request)
-    return redirect('home')  # 登录成功，跳转到首页
+
+    # 获取到request请求头里面原本的网址信息，这样登录之后就跳回原来未登录前的页面
+    referer = request.META.get('HTTP_REFERER', 'home')
+    return  render(request, 'login_logout_error.html', {'message': '注销成功！', 'redirect_to':referer})

@@ -4,7 +4,8 @@ from .models import Blog, BlogType
 from django.db.models import Count
 from django.conf import settings
 from read_statistics.utils import read_statistics_add_times
-# Create your views here.
+from django.contrib.contenttypes.models import ContentType
+from comment.models import Comment
 
 
 def get_common_blog_data(request, blogs_all_list):
@@ -88,19 +89,11 @@ def blos_with_date(request, year, month):
 def Blog_detail(request, blog_pk):
     context = {}
     blog_detail = get_object_or_404(Blog, pk=blog_pk)
-    # 每一次请求就进行阅读数加1操作，这是在模型中直接添加ReadNum计数阅读数量计数
-    # if not request.COOKIES.get('blog_%s_readed' % blog_pk):
-        # if ReadNum.objects.filter(blog=blog_detail).count():
-        #     # blog里面已经存在香港的计数记录了
-        #     readnum = ReadNum.objects.get(blog=blog_detail)
-        # else:
-        #     # 不存在相关的计数记录
-        #     readnum = ReadNum()
-        #     readnum.blog = blog_detail
-        # readnum.read_num += 1
-        # readnum.save()
-        # pass
-    # 创建独立的APP用来计数（这里是记录阅读数）的修改方式
+
+    # 获取对应博客的评论内容
+    blog_content_type = ContentType.objects.get_for_model(blog_detail)
+    comments = Comment.objects.filter(content_type=blog_content_type, object_id=blog_detail.pk)
+    context['comments'] = comments
 
     # 调用计数模块里面的方法进行博客阅读数的增加
     read_statistics_add_times(request, blog_detail, blog_pk)

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{#另外一种引入css固态文件的方法#}
+{% load staticfiles %}
+{% block title %}
+    我的网站
+{% endblock %}
+
+{% block nav_home_active %}
+    active
+{% endblock %}
+
+{% block content %}
+    <p>{{ message }}还有<span id="sp">4</span>秒跳转到原来的界面...</p>
+    <script>
+        onload=function () {
+            setInterval(go,1000)
+        };
+        var x=3;
+        function go() {
+
+            if (x>=0){
+                document.getElementById("sp").innerText=x;
+            }else {
+                location.href="{{ redirect_to }}";
+            }
+            x--;
+        }
+    </script>
+{% endblock %}
