@@ -73,7 +73,9 @@ def login(request):
             user = login_form.cleaned_data['user']
             auth.login(request, user)
             # 根据进入login前的页面（也就是博客的具体页面）传入的链接，登录成功之后就返回博客
-            return redirect(request.GET.get('from', reverse('home')))
+            # return redirect(request.GET.get('from', reverse('home')))
+            original_url = request.GET.get('from', reverse('home'))
+            return render(request, 'login_logout_error.html', {'message':'登录成功！', 'redirect_to':original_url})
     else:
         # get方法利用form表单生成对应input用于用户输入login_form
         # 实例化一个LoginForm类
