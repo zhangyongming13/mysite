@@ -4,7 +4,8 @@ from django.contrib.contenttypes.models import ContentType
 from blog.models import Blog
 from django.core.cache import cache
 from django.contrib import auth
-from .forms import LoginForm
+from django.contrib.auth.models import User
+from .forms import LoginForm, RegForm
 
 
 # 首页的处理函数
@@ -92,3 +93,32 @@ def logout(request):
     # 获取到request请求头里面原本的网址信息，这样登录之后就跳回原来未登录前的页面
     referer = request.META.get('HTTP_REFERER', 'home')
     return  render(request, 'login_logout_error.html', {'message': '注销成功！', 'redirect_to':referer})
+
+
+# 注册的处理方法
+def register(request):
+    # 和login方法类似，也需要判断式POST还是GET，POST进行账号注册，GET实例化
+    # form并传递给前端页面
+    if request.method == 'POST':
+        reg_form = RegForm(request.POST)
+        if reg_form.is_valid():
+            username = reg_form.cleaned_data['username']
+            email = reg_form.cleaned_data['email']
+            password = reg_form.cleaned_data['password']
+
+            # 创建用户
+            user = User.objects.create_user(username, email, password)
+            user.save()
+
+            # 注册之后进行登录操作
+            user = auth.authenticate(username=username, password=password)
+            auth.login(request, user)
+            # 传递注册之前页面的链接信息，注册通过之后可以返回相关的页面
+            original_url = request.GET.get('from', reverse('home'))
+            return render(request, 'login_logout_error.html', {'message': '注册成功！', 'redirect_to': original_url})
+    else:
+        # 实例化RegForm，传递给模板页面进行模板页面产生以及承载数据
+        reg_form = RegForm()
+    context = {}
+    context['reg_form'] = reg_form
+    return render(request, 'register.html', context)
