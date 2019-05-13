@@ -149,6 +149,22 @@ CACHES = {
 
 # ckeditor设置，设置名为my_config
 CKEDITOR_CONFIGS = {
+    'default':{},
+    'comment_ckeditor':{
+        'toolbar': 'custom',
+        'toolbar_custom': [  # 工具栏项目
+            ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript'],
+            ["TextColor", "BGColor", 'RemoveFormat'],
+            ['NumberedList', 'BulletedList'],
+            ['Link', 'Unlink'],
+            ["Smiley", "SpecialChar", 'Blockquote'],
+        ],
+        'width': 'auto',
+        'height': '180',
+        'tabSpaces': 4,
+        'removePlugins': 'elementspath',  # 去掉底框
+        'resize_enabled': False,
+    },
     'my_config': {
         'skin': 'moono-lisa',
         'toolbar_Basic': [

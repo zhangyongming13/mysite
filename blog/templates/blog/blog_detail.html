@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="/static/googlecode.css">
     <script src="/static/highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
 {#    <link rel="stylesheet"#}
 {#      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css">#}
 {#    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>#}
@@ -59,20 +61,28 @@
                 {% if request.user.is_authenticated %}  <!--判断是否已经登录-->
                     <!--这里的url是后面创建的用于前端向后台提交数据的-->
                     <form action="{% url 'update_comment' %}" method="post">
+                    <label>
+                        <p>{{ request.user }}, 欢迎评论！</p>
+                        <a href="{% url 'logout' %}">注销</a>
+                    </label>
                     {% csrf_token %}
+                        <!--for取出form表单中所有元素，生成html-->
+                        {% for foo in comment_form %}
+                            {{ foo }}
+                        {% endfor %}
                         <!--使用bootstrap样式form-group，base.html已经引入bootstrap-->
                         <!--向后端返回的数据-->
-                        <div class="form-group">
-                            <label for="comment_text">
-                                <p>{{ request.user }}, 欢迎评论！</p>
-                                <a href="{% url 'logout' %}">注销</a>
-                            </label>
-                            <textarea class="form-control" name="text" id="comment_text" cols="80" rows="4"></textarea>
-                        </div>
-                        <!--评论的模型是ContentType，所以传进object_id和ContentType来确认该评论对应哪一篇博客-->
-                        <input type="hidden" name="object_id" value="{{ blog_detail.pk }}">
-                        <!--这里传到后端的是字符串，而不是blog_detail这个博客数据-->
-                        <input type="hidden" name="content_type" value="blog">
+{#                        <div class="form-group">#}
+{#                            <label for="comment_text">#}
+{#                                <p>{{ request.user }}, 欢迎评论！</p>#}
+{#                                <a href="{% url 'logout' %}">注销</a>#}
+{#                            </label>#}
+{#                            <textarea class="form-control" name="text" id="comment_text" cols="80" rows="4"></textarea>#}
+{#                        </div>#}
+{#                        <!--评论的模型是ContentType，所以传进object_id和ContentType来确认该评论对应哪一篇博客-->#}
+{#                        <input type="hidden" name="object_id" value="{{ blog_detail.pk }}">#}
+{#                        <!--这里传到后端的是字符串，而不是blog_detail这个博客数据-->#}
+{#                        <input type="hidden" name="content_type" value="blog">#}
                         <input type="submit" value="提交评论" class="btn btn-primary" style="float: right">
                     </form>
                 {% else %}
@@ -89,7 +99,7 @@
                     <div class="comment-text">
                         {{ comment.user }}
                         ({{ comment.comment_time }}):
-                        {{ comment.text }}
+                        {{ comment.text | safe}}
                     </div>
                 {% empty %}
                     <p>暂无评论，评论一个？</p>

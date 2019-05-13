@@ -6,6 +6,7 @@ from django.conf import settings
 from read_statistics.utils import read_statistics_add_times
 from django.contrib.contenttypes.models import ContentType
 from comment.models import Comment
+from comment.forms import CommentForm
 
 
 def get_common_blog_data(request, blogs_all_list):
@@ -101,6 +102,12 @@ def Blog_detail(request, blog_pk):
     context['previous_blog'] = Blog.objects.filter(created_time__gt=blog_detail.created_time).last()
     context['next_blog'] = Blog.objects.filter(created_time__lt=blog_detail.created_time).first()
     context['blog_detail'] = blog_detail
+
+    # 获取评论的博客的详情，创建博客评论的时候可以一一对应
+    # comment_data = {}
+    # comment_data['content_type'] = blog_content_type.model
+    # comment_data['object_id'] = blog_pk
+    context['comment_form'] = CommentForm(initial={'content_type':blog_content_type.model, 'object_id':blog_pk})
     response = render(request, 'blog/blog_detail.html', context)
 
     # 设置发送给浏览器的cookie内容，cookie超时时间默认值，或者浏览器关闭的时候cookie才会失效
