@@ -29,7 +29,7 @@
             <h2>{{ blog_detail.title }}</h2>
             <ul class="blog-info">
                 <li>作者是：{{ blog_detail.author }}</li>
-                <li>创作时间：{{ blog_detail.created_time | date:'Y-m-d' }}</li>
+                <li>创作时间：{{ blog_detail.created_time | date:'Y-m-d H:i:s' }}</li>
                 <li>博客类型是：
                 {#{{ blog_detail.blog_type.pk }}#}
                 <!--blog_detail.blog_type.pk为传进urls.py的数据-->
@@ -60,7 +60,7 @@
                 <h3 class="comment-area-title">提交评论</h3>
                 {% if request.user.is_authenticated %}  <!--判断是否已经登录-->
                     <!--这里的url是后面创建的用于前端向后台提交数据的-->
-                    <form action="{% url 'update_comment' %}" method="post">
+                    <form id="comment_form" action="{% url 'update_comment' %}" method="post">
                     <label>
                         <p>{{ request.user }}, 欢迎评论！</p>
                         <a href="{% url 'logout' %}">注销</a>
@@ -70,6 +70,8 @@
                         {% for foo in comment_form %}
                             {{ foo }}
                         {% endfor %}
+                    <!--用于ajax显示错误信息的地方-->
+                    <span id="comment_error" class="text-danger pull-left"></span>
                         <!--使用bootstrap样式form-group，base.html已经引入bootstrap-->
                         <!--向后端返回的数据-->
 {#                        <div class="form-group">#}
@@ -83,7 +85,7 @@
 {#                        <input type="hidden" name="object_id" value="{{ blog_detail.pk }}">#}
 {#                        <!--这里传到后端的是字符串，而不是blog_detail这个博客数据-->#}
 {#                        <input type="hidden" name="content_type" value="blog">#}
-                        <input type="submit" value="提交评论" class="btn btn-primary" style="float: right">
+                        <input type="submit" value="提交评论" class="btn btn-primary pull-right">
                     </form>
                 {% else %}
                     <h4>未登录，请登录或注册后再评论！</h4>
@@ -95,19 +97,64 @@
             </div>
             <div class="comment-area">
                 <h3 class="comment-area-title">评论列表</h3>
-                {% for comment in comments %}
+                <div id="comment_list">
+                    {% for comment in comments %}
                     <div class="comment-text">
                         {{ comment.user }}
-                        ({{ comment.comment_time }}):
+                        ({{ comment.comment_time | date:"Y-m-d H:i:s"}}):
                         {{ comment.text | safe}}
                     </div>
                 {% empty %}
                     <p>暂无评论，评论一个？</p>
                 {% endfor %}
+                </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block script_extends %}
+    <script type="text/javascript">
+        {#<!--这句话的意思式获取到id为comment_form元素，然后获取到submit按钮，利用ajax进行异步提交-->#}
+        $("#comment_form").submit(function () {
+            // 清空错误信息
+            $("#comment_error").text('');
+            // 判断传入的内容是否为空
+            if(CKEDITOR.instances['id_text'].document.getBody().getText().trim()==''){
+                $("#comment_error").text('评论不能为空！');
+                return false;
+            }
+            // 更新数据到textarea
+            CKEDITOR.instances['id_text'].updateElement()
+            // 异步提交数据
+            $.ajax({
+                url:"{% url 'update_comment' %}",
+                type:'POST',
+                // 这里以下就是获取view中update_comment返回的数据了，上面是提交数据给update_comment
+                data:$("#comment_form").serialize(),  <!--获取到元素传过来的数据,传给data-->
+                cache:false,
+                success:function(data){
+                    console.log(data);
+                    if(data['status']=="SUCCESS"){
+                        var comment_html = '<div>' + data['username'] + '('+ data['comment_time'] +')'+ ':' + data['text'] + '</div>'
+                        // 在id为coment_list的元素中插入上面构造的html代码
+                        $("#comment_list").prepend(comment_html);
+                        // 提交了评论并且显示到了评论区之后清空输入框里面的数据
+                        CKEDITOR.instances['id_text'].setData('');
+                    }
+                    else{
+                        // 显示错误信息，获取到id为comment_error的元素，并把后面的内容填上去
+                        $("#comment_error").text(data['message']);
+                    }
+                },
+                error:function (xhr) {
+                    console.log(xhr);
+                }
+            });
+            return false;
+        });
+    </script>
 {% endblock %}
 
 {#{% block content %}#}

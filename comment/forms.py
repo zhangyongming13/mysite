@@ -8,7 +8,7 @@ from ckeditor.widgets import CKEditorWidget
 class CommentForm(forms.Form):
 
     # 使用ckeditor富文本编辑，设置文件在setting.py
-    text = forms.CharField(widget=CKEditorWidget(config_name='comment_ckeditor'))
+    text = forms.CharField(widget=CKEditorWidget(config_name='comment_ckeditor'), error_messages={'required':'评论内容不能为空'})
     content_type = forms.CharField(widget=forms.HiddenInput)
     object_id = forms.IntegerField(widget=forms.HiddenInput)
 
