@@ -40,7 +40,7 @@
                                         <span class="glyphicon glyphicon-time">{{ blog.created_time | date:'Y-m-d' }}</span>
                                         <span>阅读次数：{{ blog.get_read_num }}</span>
                                         <!--get_comment_count式自定义模板文件中的方法，后面两个为方法传入的参数-->
-                                        <span>评论次数：{% get_comment_count blog blog.pk %}</span>
+                                        <span>评论次数：{% get_comment_count blog %}</span>
                                     </p>
                                     <p>{{ blog.content | striptags | safe | truncatechars:120 }}</p>
                                 </div>

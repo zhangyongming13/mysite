@@ -37,7 +37,7 @@
                 <a href="{% url 'blog_with_type' blog_detail.blog_type.pk %}">{{ blog_detail.blog_type }}</a>
                 </li>
                 <li>阅读次数：{{ blog_detail.get_read_num }}</li>
-                <li>评论数：{% get_comment_count blog_detail blog_detail.pk %}</li>
+                <li>评论数：{% get_comment_count blog_detail %}</li>
             </ul>
             <div class="contend">
                 <p>{{ blog_detail.content | safe }}</p>
@@ -73,7 +73,8 @@
                         <div id="reply_content"></div>
                     </div>
                     {% csrf_token %}
-                        <!--for取出form表单中所有元素，生成html-->
+                        <!--comment_form使用自定义标签中的方法进行生成，for取出form表单中所有元素，生成html-->
+                        {% get_comment_form blog_detail as comment_form %}
                         {% for foo in comment_form %}
                             {{ foo }}
                         {% endfor %}
@@ -92,6 +93,7 @@
             <div class="comment-area">
                 <h3 class="comment-area-title">评论列表</h3>
                 <div id="comment_list">
+                    {% get_comment blog_detail as comments %}
                     {% for comment in comments %}
                     <div id="root_{{ comment.pk }}" class="comment-text">
                         <span>{{ comment.user }}</span>
@@ -103,7 +105,7 @@
                         <!--添加回复按钮，调用javascript方法-->
                         <a href="javascript:reply({{ comment.pk }});">回复</a>
 
-                        <!--通过root_comment反向获取该条评论的所有内容-->
+                        <!--通过root_comment反向获取该条评论的所有回复-->
                         {% for reply in comment.root_comment.all %}
                             <div class="reply">
                                 <span>{{ reply.user.username }}</span>

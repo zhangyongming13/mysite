@@ -92,14 +92,14 @@ def Blog_detail(request, blog_pk):
     blog_detail = get_object_or_404(Blog, pk=blog_pk)
 
     # 获取对应博客的评论内容
-    blog_content_type = ContentType.objects.get_for_model(blog_detail)
+    # blog_content_type = ContentType.objects.get_for_model(blog_detail)
 
     # 取到评论的第一条（不包括评论下面的回复）
-    comments = Comment.objects.filter(content_type=blog_content_type, object_id=blog_detail.pk, parent=None)
-    context['comments'] = comments.order_by('-comment_time')
+    # comments = Comment.objects.filter(content_type=blog_content_type, object_id=blog_detail.pk, parent=None)
+    # context['comments'] = comments.order_by('-comment_time')
     # 初始化的时候，将用于记录该评论/回复（根据reply_comment_id确定）
-    context['comment_form'] = CommentForm(
-        initial={'content_type': blog_content_type.model, 'object_id': blog_pk, 'reply_comment_id': 0})
+    # context['comment_form'] = CommentForm(
+    #     initial={'content_type': blog_content_type.model, 'object_id': blog_pk, 'reply_comment_id': 0})
 
     # 调用计数模块里面的方法进行博客阅读数的增加
     read_statistics_add_times(request, blog_detail, blog_pk)
