@@ -28,3 +28,13 @@ h3.comment-area-title{
 div.django-ckeditor-widget{
     width: 100%;
 }
+
+div.comment-text{
+    border-bottom:1px dashed #cccccc;
+    margin-bottom: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+div.reply{
+    margin-left:2em;
+}

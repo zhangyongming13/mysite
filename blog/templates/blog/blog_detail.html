@@ -65,6 +65,11 @@
                         <p>{{ request.user }}, 欢迎评论！</p>
                         <a href="{% url 'logout' %}">注销</a>
                     </label>
+                    <!--回复的时候，回复富文本编辑器所在的位置-->
+                    <div id="reply_content_container" style="display:none;">
+                        <p>回复</p>
+                        <div id="reply_content"></div>
+                    </div>
                     {% csrf_token %}
                         <!--for取出form表单中所有元素，生成html-->
                         {% for foo in comment_form %}
@@ -72,19 +77,6 @@
                         {% endfor %}
                     <!--用于ajax显示错误信息的地方-->
                     <span id="comment_error" class="text-danger pull-left"></span>
-                        <!--使用bootstrap样式form-group，base.html已经引入bootstrap-->
-                        <!--向后端返回的数据-->
-{#                        <div class="form-group">#}
-{#                            <label for="comment_text">#}
-{#                                <p>{{ request.user }}, 欢迎评论！</p>#}
-{#                                <a href="{% url 'logout' %}">注销</a>#}
-{#                            </label>#}
-{#                            <textarea class="form-control" name="text" id="comment_text" cols="80" rows="4"></textarea>#}
-{#                        </div>#}
-{#                        <!--评论的模型是ContentType，所以传进object_id和ContentType来确认该评论对应哪一篇博客-->#}
-{#                        <input type="hidden" name="object_id" value="{{ blog_detail.pk }}">#}
-{#                        <!--这里传到后端的是字符串，而不是blog_detail这个博客数据-->#}
-{#                        <input type="hidden" name="content_type" value="blog">#}
                         <input type="submit" value="提交评论" class="btn btn-primary pull-right">
                     </form>
                 {% else %}
@@ -99,13 +91,34 @@
                 <h3 class="comment-area-title">评论列表</h3>
                 <div id="comment_list">
                     {% for comment in comments %}
-                    <div class="comment-text">
-                        {{ comment.user }}
-                        ({{ comment.comment_time | date:"Y-m-d H:i:s"}}):
-                        {{ comment.text | safe}}
+                    <div id="root_{{ comment.pk }}" class="comment-text">
+                        <span>{{ comment.user }}</span>
+                        <span>({{ comment.comment_time | date:"Y-m-d H:i:s"}}):</span>
+                        <!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
+                        <div id="content_{{ comment.pk }}">
+                            {{ comment.text | safe}}
+                        </div>
+                        <!--添加回复按钮，调用javascript方法-->
+                        <a href="javascript:reply({{ comment.pk }});">回复</a>
+
+                        <!--通过root_comment反向获取该条评论的所有内容-->
+                        {% for reply in comment.root_comment.all %}
+                            <div class="reply">
+                                <span>{{ reply.user.username }}</span>
+                                <span>({{ reply.comment_time | date:"Y-m-d H:i:s" }})</span>
+                                <span>回复</span>
+                                <span>{{ reply.reply_to }}:</span>
+                                <!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
+                                <div id="content_{{ reply.pk }}">
+                                    {{ reply.text | safe}}
+                                </div>
+                                <!--添加回复按钮，调用javascript方法-->
+                                <a href="javascript:reply({{ reply.pk }});">回复</a>
+                            </div>
+                        {% endfor %}
                     </div>
                 {% empty %}
-                    <p>暂无评论，评论一个？</p>
+                    <span id="no_comment">暂无评论，评论一个？</span>
                 {% endfor %}
                 </div>
             </div>
@@ -126,7 +139,7 @@
                 return false;
             }
             // 更新数据到textarea
-            CKEDITOR.instances['id_text'].updateElement()
+            CKEDITOR.instances['id_text'].updateElement();
             // 异步提交数据
             $.ajax({
                 url:"{% url 'update_comment' %}",
@@ -137,11 +150,37 @@
                 success:function(data){
                     console.log(data);
                     if(data['status']=="SUCCESS"){
-                        var comment_html = '<div>' + data['username'] + '('+ data['comment_time'] +')'+ ':' + data['text'] + '</div>'
-                        // 在id为coment_list的元素中插入上面构造的html代码
-                        $("#comment_list").prepend(comment_html);
                         // 提交了评论并且显示到了评论区之后清空输入框里面的数据
+                        if($('#reply_comment_id').val()=='0'){  //这是一条评论
+                            var comment_html =  '<div class="comment-text">' +
+                                '<span>' + data['username'] + '</span>' +
+                                '<span>(' + data['comment_time'] + '):</span>' +
+                                <!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
+                                '<div id="content_' + data['pk'] + '">' +
+                                    data['text'] +
+                                '</div>' +
+                                '<a href="javascript:reply(' + data['pk'] + ');">回复</a>' +
+                            '</div>';
+                            // 在id为coment_list的元素中插入上面构造的html代码
+                            $("#comment_list").prepend(comment_html);  //在comment_list元素的开头插入构造的html文件
+                        }else{  //这是一条回复
+                            var reply_html =  '<div class="reply">' +
+                                '<span>' + data['username'] + '</span>' +
+                                '<span>(' + data['comment_time'] + ')</span>' +
+                                '<span>回复</span>' +
+                                '<span>' + data['reply_to'] + ':</span>' +
+                                <!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
+                                '<div id="content_' + data['pk'] + '">'
+                                    + data['text'] +
+                                '</div>' +
+                                '<a href="javascript:reply(' + data['pk'] + ');">回复</a>' +
+                            '</div>';
+                            $("#root_" + data['root_pk']).append(reply_html);
+                    }
                         CKEDITOR.instances['id_text'].setData('');
+                        $("#reply_content_container").hide();
+                        $("#reply_comment_id").val('0');
+                        $("no_comment").remove();
                     }
                     else{
                         // 显示错误信息，获取到id为comment_error的元素，并把后面的内容填上去
@@ -154,6 +193,17 @@
             });
             return false;
         });
+        function reply(reply_comment_id){
+            // 点击回复的时候，被回复评论的值就需要变为被回复评论的PK值
+            $("#reply_comment_id").val(reply_comment_id);
+            var html = $("#content_" + reply_comment_id).html();
+            $("#reply_content").html(html);  // 取出被回复的内容然后放到reply_content这个元素中
+            $("#reply_content_container").show();
+            $('html').animate({scrollTop: $('#comment_form').offset().top - 60}, 300, function(){
+                // 获取到富文本编辑器，并聚焦
+                CKEDITOR.instances['id_text'].focus();
+            })
+        }
     </script>
 {% endblock %}
 

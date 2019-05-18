@@ -18,8 +18,27 @@ def update_comment(request):
         comment.user = request.user
         comment.text = comment_form.cleaned_data['text']
         comment.content_object = comment_form.cleaned_data['content_object']
+
+        parent = comment_form.cleaned_data['parent']
+        if not parent is None:  # 这一条是回复
+            if parent.root is None:  # 被这条回复的内容是一条评论不是一条回复
+                comment.root = parent
+            else:  # 被这条回复的内容是一条回复，所以这条回复的root的parent的root，以此类推，直到最后一个是评论
+                comment.root = parent.root
+            comment.parent = parent
+            comment.reply_to = parent.user  # models设置该parent的时候，外键关联User，可以可以通过parent找到user
+            data['reply_to'] = comment.reply_to.username
+        else:
+            data['reply_to'] = ''
+
         comment.save()
 
+        data['pk'] = comment.pk
+        # 这是一条评论的话
+        if comment.root is None:
+            data['root_pk'] = ''
+        else:
+            data['root_pk'] = comment.root.pk
         # 构建返回给前端ajax的数据
         data['status'] = 'SUCCESS'
         data['username'] = comment.user.username

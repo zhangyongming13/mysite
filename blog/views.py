@@ -93,8 +93,13 @@ def Blog_detail(request, blog_pk):
 
     # 获取对应博客的评论内容
     blog_content_type = ContentType.objects.get_for_model(blog_detail)
-    comments = Comment.objects.filter(content_type=blog_content_type, object_id=blog_detail.pk)
-    context['comments'] = comments
+
+    # 取到评论的第一条（不包括评论下面的回复）
+    comments = Comment.objects.filter(content_type=blog_content_type, object_id=blog_detail.pk, parent=None)
+    context['comments'] = comments.order_by('-comment_time')
+    # 初始化的时候，将用于记录该评论/回复（根据reply_comment_id确定）
+    context['comment_form'] = CommentForm(
+        initial={'content_type': blog_content_type.model, 'object_id': blog_pk, 'reply_comment_id': 0})
 
     # 调用计数模块里面的方法进行博客阅读数的增加
     read_statistics_add_times(request, blog_detail, blog_pk)
@@ -107,7 +112,7 @@ def Blog_detail(request, blog_pk):
     # comment_data = {}
     # comment_data['content_type'] = blog_content_type.model
     # comment_data['object_id'] = blog_pk
-    context['comment_form'] = CommentForm(initial={'content_type':blog_content_type.model, 'object_id':blog_pk})
+
     response = render(request, 'blog/blog_detail.html', context)
 
     # 设置发送给浏览器的cookie内容，cookie超时时间默认值，或者浏览器关闭的时候cookie才会失效
