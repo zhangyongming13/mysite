@@ -47,7 +47,7 @@ class CommentForm(forms.Form):
             raise forms.ValidationError('回复出错！')
         elif reply_comment_id == 0:  # 证明这是一条评论不是一条回复
             self.cleaned_data['parent'] = None
-        elif reply_comment_id > 0:  # 证明这是一条回复，设置这条回复的parent,表面被回复的是谁
+        elif Comment.objects.filter(pk=reply_comment_id).exists():  # 证明这是一条回复，设置这条回复的parent,表面被回复的是谁
             self.cleaned_data['parent'] = Comment.objects.get(pk=reply_comment_id)
         else:
             raise forms.ValidationError('回复出错！')

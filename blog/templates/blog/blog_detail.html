@@ -69,7 +69,7 @@
                     </label>
                     <!--回复的时候，回复富文本编辑器所在的位置-->
                     <div id="reply_content_container" style="display:none;">
-                        <p>回复</p>
+                        <p id="reply_title">回复：</p>
                         <div id="reply_content"></div>
                     </div>
                     {% csrf_token %}
@@ -79,7 +79,7 @@
                             {{ foo }}
                         {% endfor %}
                     <!--用于ajax显示错误信息的地方-->
-                    <span id="comment_error" class="text-danger pull-left"></span>
+                    <span id="comment_error_or_success" class="text-danger pull-left"></span>
                         <input type="submit" value="提交评论" class="btn btn-primary pull-right">
                     </form>
                 {% else %}
@@ -133,13 +133,24 @@
 
 {% block script_extends %}
     <script type="text/javascript">
+        function reply(reply_comment_id){
+            // 点击回复的时候，被回复评论的值就需要变为被回复评论的PK值
+            $("#reply_comment_id").val(reply_comment_id);
+            var html = $("#content_" + reply_comment_id).html();
+            $("#reply_content").html(html);  // 取出被回复的内容然后放到reply_content这个元素中
+            $("#reply_content_container").show();
+            $('html').animate({scrollTop: $('#comment_form').offset().top - 60}, 300, function(){
+                // 获取到富文本编辑器，并聚焦
+                CKEDITOR.instances['id_text'].focus();
+            });
+        }
         {#<!--这句话的意思式获取到id为comment_form元素，然后获取到submit按钮，利用ajax进行异步提交-->#}
         $("#comment_form").submit(function () {
             // 清空错误信息
-            $("#comment_error").text('');
+            $("#comment_error_or_success").text('');
             // 判断传入的内容是否为空
             if(CKEDITOR.instances['id_text'].document.getBody().getText().trim()==''){
-                $("#comment_error").text('评论不能为空！');
+                $("#comment_error_or_success").text('评论不能为空！');
                 return false;
             }
             // 更新数据到textarea
@@ -156,7 +167,7 @@
                     if(data['status']=="SUCCESS"){
                         // 提交了评论并且显示到了评论区之后清空输入框里面的数据
                         if($('#reply_comment_id').val()=='0'){  //这是一条评论
-                            var comment_html =  '<div class="comment-text">' +
+                            var comment_html = '<div id="root_' + data['pk'] + '" class="comment-text">' +
                                 '<span>' + data['username'] + '</span>' +
                                 '<span>(' + data['comment_time'] + '):</span>' +
                                 <!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
@@ -167,6 +178,7 @@
                             '</div>';
                             // 在id为coment_list的元素中插入上面构造的html代码
                             $("#comment_list").prepend(comment_html);  //在comment_list元素的开头插入构造的html文件
+                            $("#comment_error_or_success").text('评论成功！')
                         }else{  //这是一条回复
                             var reply_html =  '<div class="reply">' +
                                 '<span>' + data['username'] + '</span>' +
@@ -177,18 +189,19 @@
                                 '<div id="content_' + data['pk'] + '">'
                                     + data['text'] +
                                 '</div>' +
-                                '<a href="javascript:reply(' + data['pk'] + ');">回复</a>' +
-                            '</div>';
+                                '<a href="javascript:reply(' + data['pk'] + ');">回复</a>' + '</div>';
                             $("#root_" + data['root_pk']).append(reply_html);
-                    }
+                            $("#comment_error_or_success").text('回复成功！');
+                        }
                         CKEDITOR.instances['id_text'].setData('');
                         $("#reply_content_container").hide();
                         $("#reply_comment_id").val('0');
-                        $("no_comment").remove();
+                        $("#no_comment").remove();
+                        $("#comment_error_or_success").show().delay(5000).fadeOut();
                     }
                     else{
-                        // 显示错误信息，获取到id为comment_error的元素，并把后面的内容填上去
-                        $("#comment_error").text(data['message']);
+                        // 显示错误信息，获取到id为comment_error_or_success的元素，并把后面的内容填上去
+                        $("#comment_error_or_success").text(data['message']);
                     }
                 },
                 error:function (xhr) {
@@ -197,17 +210,6 @@
             });
             return false;
         });
-        function reply(reply_comment_id){
-            // 点击回复的时候，被回复评论的值就需要变为被回复评论的PK值
-            $("#reply_comment_id").val(reply_comment_id);
-            var html = $("#content_" + reply_comment_id).html();
-            $("#reply_content").html(html);  // 取出被回复的内容然后放到reply_content这个元素中
-            $("#reply_content_container").show();
-            $('html').animate({scrollTop: $('#comment_form').offset().top - 60}, 300, function(){
-                // 获取到富文本编辑器，并聚焦
-                CKEDITOR.instances['id_text'].focus();
-            })
-        }
     </script>
 {% endblock %}
 

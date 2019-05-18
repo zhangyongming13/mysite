@@ -48,7 +48,7 @@ def update_comment(request):
     else:
         data['status'] = 'ERROR'
         # 返回具体的错误信息
-        data['message'] = list(comment_form.errors.values())[0]
+        data['message'] = list(comment_form.errors.values())[0][0]
     return JsonResponse(data)
         # return render('login_logout_error.html', request, {'message': comment_form.errors, 'redirect_to': referer})
     # # 返回原来的博客页面

@@ -20,12 +20,12 @@ class Blog(models.Model, ReadNumExpandMethod):
     read_details = GenericRelation(ReadDetail)
     title = models.CharField(max_length=50)
     # 博文的类型作为一个外键引入到Blog模型中
-    blog_type = models.ForeignKey(BlogType, on_delete=models.DO_NOTHING)
+    blog_type = models.ForeignKey(BlogType, on_delete=models.CASCADE)
 
     # 添加富文本设置
     content = RichTextUploadingField(config_name='my_config')
     # 利用django自带的用户认证模型为新闻添加作者，on_delete表示文章删除的时候对关联对应的作者的操作，这里式不做任何操作
-    author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     created_time = models.DateTimeField(auto_now_add=True)
     last_update_time = models.DateTimeField(auto_now=True)
     is_delete = models.BooleanField(default=False)
@@ -51,4 +51,4 @@ class Blog(models.Model, ReadNumExpandMethod):
 # class ReadNum(models.Model):
 #     read_num = models.IntegerField(default=0)
 #     # 外键关联blog，因为计数功能可能用在其他的app，所以这里要blog当外键
-#     blog = models.OneToOneField(Blog, on_delete=models.DO_NOTHING)
+#     blog = models.OneToOneField(Blog, on_delete=models.CASCADE)

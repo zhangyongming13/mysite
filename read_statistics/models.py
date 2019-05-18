@@ -9,7 +9,7 @@ from django.utils import timezone
 class ReadNum(models.Model):
     read_num = models.IntegerField(default=0)
     # 通过外键指向带有所有信息的ContentType
-    content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     # 记录对应models的主键值
     object_id = models.PositiveIntegerField()
     # 通过外键直接获取上面的信息
@@ -34,7 +34,7 @@ class ReadDetail(models.Model):
     date = models.DateField(default=timezone.now)
     read_num = models.IntegerField(default=0)
     # 通过外键指向带有所有信息的ContentType
-    content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     # 记录对应models的主键值
     object_id = models.PositiveIntegerField()
     # 通过外键直接获取上面的信息
