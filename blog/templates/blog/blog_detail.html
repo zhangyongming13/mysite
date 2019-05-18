@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% load staticfiles %}
+{% load comment_tags %}  <!--加载template模板，就是自定义模板文件的文件名-->
 {% block header_extends %}
     <link rel="stylesheet" href="{% static 'blog_detail.css' %}">
     <link rel="stylesheet" href="/static/googlecode.css">
@@ -36,6 +37,7 @@
                 <a href="{% url 'blog_with_type' blog_detail.blog_type.pk %}">{{ blog_detail.blog_type }}</a>
                 </li>
                 <li>阅读次数：{{ blog_detail.get_read_num }}</li>
+                <li>评论数：{% get_comment_count blog_detail blog_detail.pk %}</li>
             </ul>
             <div class="contend">
                 <p>{{ blog_detail.content | safe }}</p>
