@@ -49,6 +49,11 @@
                 <span class="liked-num">{% get_like_num blog_detail %}</span>
                 <span>喜欢</span>
             </div>
+            <div class="dislike" onclick="dislikeChange(this, '{% get_content_type blog_detail %}', {{ blog_detail.pk }})">
+                <span class="glyphicon glyphicon-thumbs-down {% get_dislike_status blog_detail request.user %}"></span>
+                <span class="disliked-num">{% get_dislike_num blog_detail %}</span>
+                <span>不喜欢</span>
+            </div>
             <div class="blog_more">
                 {% if previous_blog %}
                     <p>上一篇：<a href="{% url 'blog_detail' previous_blog.pk %}">{{ previous_blog.title }}</a></p>
@@ -115,6 +120,11 @@
                             <span class="liked-num">{% get_like_num comment %}</span>
                             <span>喜欢</span>
                         </div>
+                        <div class="dislike" onclick="dislikeChange(this, '{% get_content_type comment %}', {{ comment.pk }})">
+                            <span class="glyphicon glyphicon-thumbs-down {% get_dislike_status comment request.user %}"></span>
+                            <span class="disliked-num">{% get_dislike_num comment %}</span>
+                            <span>不喜欢</span>
+                        </div>
                         <!--添加回复按钮，调用javascript方法-->
                         <a href="javascript:reply({{ comment.pk }});">回复</a>
 
@@ -133,6 +143,11 @@
                                     <span class="glyphicon glyphicon-thumbs-up {% get_like_status reply request.user %}"></span>
                                     <span class="liked-num">{% get_like_num reply %}</span>
                                     <span>喜欢</span>
+                                </div>
+                                <div class="dislike" onclick="dislikeChange(this, '{% get_content_type reply %}', {{ reply.pk }})">
+                                    <span class="glyphicon glyphicon-thumbs-down {% get_dislike_status reply request.user %}"></span>
+                                    <span class="disliked-num">{% get_dislike_num reply %}</span>
+                                    <span>不喜欢</span>
                                 </div>
                                 <!--添加回复按钮，调用javascript方法-->
                                 <a href="javascript:reply({{ reply.pk }});">回复</a>
@@ -259,6 +274,48 @@
                         // 更新点赞数量
                         var like_num_element = $(obj.getElementsByClassName('liked-num'));
                         like_num_element.text(data['like_num'])
+                    }
+                    else{
+                        alert(data['message']);
+                    }
+                },
+                error:function(xhr){
+                    console.log(xhr);
+                }
+            });
+        }
+        function dislikeChange(obj, content_type, object_id){
+            // 根据传进来的div里面是否有class=active来判断是否已经点赞,is_like是true表示用户进行不喜欢操作，不然就是取消不喜欢操作
+            var is_dislike = obj.getElementsByClassName('active').length == 0
+            $.ajax({  // 异步提交数据
+                url: '{% url "dislike_change" %}',
+                type: 'GET',
+                data:{
+                    content_type:content_type,
+                    object_id:object_id,
+                    is_dislike:is_dislike,
+                    {#object:object,#}
+                },
+                cache: false,
+                success:function(data){
+                    console.log(data);
+                    if(data['status'] == "SUCCESS"){
+                        {#var like_html = '<div class="like" onclick="likeChange(this, "' + {% get_content_type data['object'] %} + '", ' + data['object'].pk + ',' +  data['object'] + ')">' +#}
+                        {#                    '<span class="glyphicon glyphicon-thumbs-up' + {% get_like_status data['object'] data['user'] %} + '"></span>' +#}
+                        {#                    '<span class="liked-num">' + {% get_like_num data['object'] %} + '</span>' + #}
+                        {#                    '<span>喜欢</span>' +#}
+                        {#                '</div>';#}
+                        // 获取到active所在的前端元素//更新前端页面点赞的状态
+                        var dislike_element = $(obj.getElementsByClassName('glyphicon'));
+                        if(is_dislike){  //用户是进行点赞操作
+                            dislike_element.addClass('active');
+                        }
+                        else{  //用户进行取消点赞操作
+                            dislike_element.removeClass('active');
+                        }
+                        // 更新点赞数量
+                        var dislike_num_element = $(obj.getElementsByClassName('disliked-num'));
+                        dislike_num_element.text(data['like_num'])
                     }
                     else{
                         alert(data['message']);
