@@ -10,6 +10,7 @@ div.col-xs-10 ul.blog-info li{
 
 div.contend p{
     text-indent: 2em;
+    margin-bottom:2em;
 }
 
 div.blog_more {
@@ -56,3 +57,13 @@ span#comment_error_or_success{
     font-size: 20px;
 }
 
+div.like{
+    color:#337ab7;
+    display: inline-block;
+    cursor: pointer;
+    padding: 0.5em 0.3em;
+}
+
+div.like .active{
+    color: #f22;
+}

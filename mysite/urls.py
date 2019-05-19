@@ -12,6 +12,8 @@ urlpatterns = [
     path('blog/', include('blog.urls')),  # 将App内创建的urls利用include进行引入
     path('ckeditor', include('ckeditor_uploader.urls')),  # # 上传图片的url
     path('comment/', include('comment.urls')),
+    # path('likes/', include('likes.urls')),
+    path('likes/', include('likes.urls')),
     path('login/', login, name='login'),
     path('logout/', logout, name='logout'),
     path('register/', register, name='register'),

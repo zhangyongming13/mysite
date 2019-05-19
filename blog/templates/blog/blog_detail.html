@@ -2,6 +2,7 @@
 
 {% load staticfiles %}
 {% load comment_tags %}  <!--加载template模板，就是自定义模板文件的文件名-->
+{% load like_tags %}
 {% block header_extends %}
     <link rel="stylesheet" href="{% static 'blog_detail.css' %}">
     <link rel="stylesheet" href="/static/googlecode.css">
@@ -41,6 +42,12 @@
             </ul>
             <div class="contend">
                 <p>{{ blog_detail.content | safe }}</p>
+            </div>
+            <!--触发点赞或者取消点赞事件,把this(整个div块都传给ajax的这个function)-->
+            <div class="like" onclick="likeChange(this, '{% get_content_type blog_detail %}', {{ blog_detail.pk }})">
+                <span class="glyphicon glyphicon-thumbs-up {% get_like_status blog_detail request.user %}"></span>
+                <span class="liked-num">{% get_like_num blog_detail %}</span>
+                <span>喜欢</span>
             </div>
             <div class="blog_more">
                 {% if previous_blog %}
@@ -102,6 +109,12 @@
                         <div id="content_{{ comment.pk }}">
                             {{ comment.text | safe}}
                         </div>
+                        <!--触发点赞或者取消点赞事件,把this(整个div块都传给ajax的这个function)-->
+                        <div class="like" onclick="likeChange(this, '{% get_content_type comment %}', {{ comment.pk }})">
+                            <span class="glyphicon glyphicon-thumbs-up {% get_like_status comment request.user %}"></span>
+                            <span class="liked-num">{% get_like_num comment %}</span>
+                            <span>喜欢</span>
+                        </div>
                         <!--添加回复按钮，调用javascript方法-->
                         <a href="javascript:reply({{ comment.pk }});">回复</a>
 
@@ -115,6 +128,11 @@
                                 <!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
                                 <div id="content_{{ reply.pk }}">
                                     {{ reply.text | safe}}
+                                </div>
+                                <div class="like" onclick="likeChange(this, '{% get_content_type reply %}', {{ reply.pk }})">
+                                    <span class="glyphicon glyphicon-thumbs-up {% get_like_status reply request.user %}"></span>
+                                    <span class="liked-num">{% get_like_num reply %}</span>
+                                    <span>喜欢</span>
                                 </div>
                                 <!--添加回复按钮，调用javascript方法-->
                                 <a href="javascript:reply({{ reply.pk }});">回复</a>
@@ -174,8 +192,7 @@
                                 '<div id="content_' + data['pk'] + '">' +
                                     data['text'] +
                                 '</div>' +
-                                '<a href="javascript:reply(' + data['pk'] + ');">回复</a>' +
-                            '</div>';
+                                '<a href="javascript:reply(' + data['pk'] + ');">回复</a>' + '</div>';
                             // 在id为coment_list的元素中插入上面构造的html代码
                             $("#comment_list").prepend(comment_html);  //在comment_list元素的开头插入构造的html文件
                             $("#comment_error_or_success").text('评论成功！')
@@ -210,6 +227,48 @@
             });
             return false;
         });
+        function likeChange(obj, content_type, object_id){
+            // 根据传进来的div里面是否有class=active来判断是否已经点赞,is_like是true表示用户进行点赞操作，不然就是取消点赞操作
+            var is_like = obj.getElementsByClassName('active').length == 0
+            $.ajax({  // 异步提交数据
+                url: '{% url "like_change" %}',
+                type: 'GET',
+                data:{
+                    content_type:content_type,
+                    object_id:object_id,
+                    is_like:is_like,
+                    {#object:object,#}
+                },
+                cache: false,
+                success:function(data){
+                    console.log(data);
+                    if(data['status'] == "SUCCESS"){
+                        {#var like_html = '<div class="like" onclick="likeChange(this, "' + {% get_content_type data['object'] %} + '", ' + data['object'].pk + ',' +  data['object'] + ')">' +#}
+                        {#                    '<span class="glyphicon glyphicon-thumbs-up' + {% get_like_status data['object'] data['user'] %} + '"></span>' +#}
+                        {#                    '<span class="liked-num">' + {% get_like_num data['object'] %} + '</span>' + #}
+                        {#                    '<span>喜欢</span>' +#}
+                        {#                '</div>';#}
+                        // 获取到active所在的前端元素//更新前端页面点赞的状态
+                        var like_element = $(obj.getElementsByClassName('glyphicon'));
+                        if(is_like){  //用户是进行点赞操作
+                            like_element.addClass('active');
+                        }
+                        else{  //用户进行取消点赞操作
+                            like_element.removeClass('active');
+                        }
+                        // 更新点赞数量
+                        var like_num_element = $(obj.getElementsByClassName('liked-num'));
+                        like_num_element.text(data['like_num'])
+                    }
+                    else{
+                        alert(data['message']);
+                    }
+                },
+                error:function(xhr){
+                    console.log(xhr);
+                }
+            });
+        }
     </script>
 {% endblock %}
 
