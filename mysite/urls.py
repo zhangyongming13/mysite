@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import home, login, logout, register
+from .views import home, login, logout, register, login_for_medal
 
 urlpatterns = [
     path('', home, name='home'),  # 根目录，把之前的博客列表换成这个
@@ -15,6 +15,7 @@ urlpatterns = [
     # path('likes/', include('likes.urls')),
     path('likes/', include('likes.urls')),
     path('login/', login, name='login'),
+    path('login_for_medal', login_for_medal, name='login_for_medal'),
     path('logout/', logout, name='logout'),
     path('register/', register, name='register'),
 ]

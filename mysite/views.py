@@ -6,6 +6,7 @@ from django.core.cache import cache
 from django.contrib import auth
 from django.contrib.auth.models import User
 from .forms import LoginForm, RegForm
+from django.http import JsonResponse
 
 
 # 首页的处理函数
@@ -85,6 +86,20 @@ def login(request):
     context = {}
     context['login_form'] = login_form
     return render(request, 'login.html', context)
+
+
+def login_for_medal(request):
+    login_form = LoginForm(request.POST)
+    data = {}
+    # 提交的数据没有问题，进行登录操作
+    if login_form.is_valid():
+        # user已经在form表单中进行进行验证，直接登录
+        user = login_form.cleaned_data['user']
+        auth.login(request, user)
+        data['status'] = 'SUCCESS'
+    else:
+        data['status'] = 'ERROR'
+    return JsonResponse(data)
 
 
 def logout(request):
