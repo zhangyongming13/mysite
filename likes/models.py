@@ -32,7 +32,7 @@ class DislikeCount(models.Model):  # 用于记录不喜欢的数
     disliked_num = models.IntegerField(default=0)
 
 
-class DisikeRecord(models.Model):  # 用于记录不喜欢的详细情况，比如谁在上面时间对什么标记不喜欢
+class DislikeRecord(models.Model):  # 用于记录不喜欢的详细情况，比如谁在上面时间对什么标记不喜欢
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')

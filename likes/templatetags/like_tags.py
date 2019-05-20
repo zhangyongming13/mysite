@@ -1,5 +1,5 @@
 from django import template
-from ..models import LikeCount, LikeRecord, DisikeRecord, DislikeCount
+from ..models import LikeCount, LikeRecord, DislikeRecord, DislikeCount
 from django.contrib.contenttypes.models import ContentType
 
 register = template.Library()
@@ -35,7 +35,7 @@ def get_dislike_status(obj, user):
     obj_content_type = ContentType.objects.get_for_model(obj)
     if not user.is_authenticated:
         return ''
-    if DisikeRecord.objects.filter(content_type=obj_content_type, object_id=obj.pk, user=user).exists():
+    if DislikeRecord.objects.filter(content_type=obj_content_type, object_id=obj.pk, user=user).exists():
         return 'active'
     else:
         return ''

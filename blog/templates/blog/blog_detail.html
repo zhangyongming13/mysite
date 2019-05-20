@@ -166,6 +166,14 @@
 
 {% block script_extends %}
     <script type="text/javascript">
+        // 替换前端数据中的{数字}，比如{0}+{1}+{0},a,b 就会替换成{a}+{b}+{a}
+        String.prototype.format = function () {
+            var str = this;  // 接收前端传进来的文件
+            for (var i = 0; i < arguments.length; i++){
+                var str = str.replace(new RegExp('\\{' + i + '\\}', 'g'), arguments[i])
+            }
+            return str;
+        };
         function reply(reply_comment_id){
             // 点击回复的时候，被回复评论的值就需要变为被回复评论的PK值
             $("#reply_comment_id").val(reply_comment_id);
@@ -200,28 +208,76 @@
                     if(data['status']=="SUCCESS"){
                         // 提交了评论并且显示到了评论区之后清空输入框里面的数据
                         if($('#reply_comment_id').val()=='0'){  //这是一条评论
-                            var comment_html = '<div id="root_' + data['pk'] + '" class="comment-text">' +
-                                '<span>' + data['username'] + '</span>' +
-                                '<span>(' + data['comment_time'] + '):</span>' +
-                                <!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
-                                '<div id="content_' + data['pk'] + '">' +
-                                    data['text'] +
-                                '</div>' +
-                                '<a href="javascript:reply(' + data['pk'] + ');">回复</a>' + '</div>';
+                            {#var comment_html = '<div id="root_' + data['pk'] + '" class="comment-text">' +#}
+                            {#    '<span>' + data['username'] + '</span>' +#}
+                            {#    '<span>(' + data['comment_time'] + '):</span>' +#}
+                            {#    <!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->#}
+                            {#    '<div id="content_' + data['pk'] + '">' +#}
+                            {#        data['text'] +#}
+                            {#    '</div>' +#}
+                            {#    '<a href="javascript:reply(' + data['pk'] + ');">回复</a>' + '</div>';#}
+                            var comment_html = '<div id="root_{0}" class="comment-text">' +
+                                                '<span>{1}</span>' +
+                                                '<span>({2}):</span>' +
+                                                //<!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
+                                                '<div id="content_{0}">' +
+                                                    '{3}' +
+                                                '</div>' +
+                                                //<!--触发点赞或者取消点赞事件,把this(整个div块都传给ajax的这个function)-->
+                                                '<div class="like" onclick="likeChange(this, \'{4}\', {0})">' +
+                                                    // 新加的评论或者回复点赞和不喜欢的状态都不是激活状态，所以用不到自定义模板标签,数量也是为0
+                                                    '<span class="glyphicon glyphicon-thumbs-up"></span>' +
+                                                    '<span class="liked-num">0</span> ' +
+                                                    '<span>喜欢</span>' +
+                                                '</div>' +
+                                                '<div class="dislike" onclick="dislikeChange(this, \'{4}\', {0})">' +
+                                                    //// 新加的评论或者回复点赞和不喜欢的状态都不是激活状态，所以用不到自定义模板标签,数量也是为0
+                                                    '<span class="glyphicon glyphicon-thumbs-down"></span>' +
+                                                    '<span class="disliked-num">0</span> ' +
+                                                    '<span>不喜欢</span>' +
+                                                '</div>' +
+                                                //<!--添加回复按钮，调用javascript方法-->
+                                                '<a href="javascript:reply({0});">回复</a>' +
+                                                '</div>';
+                            //使用format批量替换数据format({0}, {1}, {2}, {3}, {4})
+                            comment_html = comment_html.format(data['pk'], data['username'], data['comment_time'], data['text'], data['content_type']);
                             // 在id为coment_list的元素中插入上面构造的html代码
                             $("#comment_list").prepend(comment_html);  //在comment_list元素的开头插入构造的html文件
-                            $("#comment_error_or_success").text('评论成功！')
+                            $("#comment_error_or_success").text('评论成功！');
                         }else{  //这是一条回复
-                            var reply_html =  '<div class="reply">' +
-                                '<span>' + data['username'] + '</span>' +
-                                '<span>(' + data['comment_time'] + ')</span>' +
-                                '<span>回复</span>' +
-                                '<span>' + data['reply_to'] + ':</span>' +
-                                <!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
-                                '<div id="content_' + data['pk'] + '">'
-                                    + data['text'] +
-                                '</div>' +
-                                '<a href="javascript:reply(' + data['pk'] + ');">回复</a>' + '</div>';
+                            {#var reply_html =  '<div class="reply">' +#}
+                            {#    '<span>' + data['username'] + '</span>' +#}
+                            {#    '<span>(' + data['comment_time'] + ')</span>' +#}
+                            {#    '<span>回复</span>' +#}
+                            {#    '<span>' + data['reply_to'] + ':</span>' +#}
+                            {#    <!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->#}
+                            {#    '<div id="content_' + data['pk'] + '">'#}
+                            {#        + data['text'] +#}
+                            {#    '</div>' +#}
+                            {#    '<a href="javascript:reply(' + data['pk'] + ');">回复</a>' + '</div>';#}
+                            var reply_html = '<div class="reply">' +
+                                                '<span>{0}</span>' +
+                                                '<span>({1})</span>' +
+                                                '<span>回复</span>' +
+                                                '<span>{2}:</span>' +
+                                                //<!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
+                                                '<div id="content_{3}">' +
+                                                    '{4}' +
+                                                '</div>' +
+                                                '<div class="like" onclick="likeChange(this, \'{5}\', {3})">' +
+                                                    '<span class="glyphicon glyphicon-thumbs-up"></span>' +
+                                                    '<span class="liked-num">0</span> ' +
+                                                    '<span>喜欢</span>' +
+                                                '</div>' +
+                                                '<div class="dislike" onclick="dislikeChange(this, \'{5}\', {3})">' +
+                                                    '<span class="glyphicon glyphicon-thumbs-down"></span>' +
+                                                    '<span class="disliked-num">0</span> ' +
+                                                    '<span>不喜欢</span>' +
+                                                '</div>' +
+                                                //<!--添加回复按钮，调用javascript方法-->
+                                                '<a href="javascript:reply({3});">回复</a>' +
+                                            '</div>';
+                            reply_html = reply_html.format(data['username'], data['comment_time'], data['reply_to'], data['pk'], data['text'], data['content_type']);
                             $("#root_" + data['root_pk']).append(reply_html);
                             $("#comment_error_or_success").text('回复成功！');
                         }

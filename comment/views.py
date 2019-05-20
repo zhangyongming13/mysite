@@ -41,6 +41,7 @@ def update_comment(request):
             data['root_pk'] = comment.root.pk
         # 构建返回给前端ajax的数据
         data['status'] = 'SUCCESS'
+        data['content_type'] = ContentType.objects.get_for_model(comment).model
         data['username'] = comment.user.username
         data['comment_time'] = timezone.localtime(comment.comment_time).strftime('%Y-%m-%d %H:%M:%S')
         data['text'] = comment.text
