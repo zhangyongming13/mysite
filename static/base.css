@@ -10,3 +10,7 @@ body {
 ul {
     list-style-type: none;
 }
+
+ul.navbar-right {
+    margin-right: 0;
+}

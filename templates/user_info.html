@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{#另外一种引入css固态文件的方法#}
+{% load staticfiles %}
+
+{% block title %}
+    我的网站|用户信息
+{% endblock %}
+
+{% block nav_home_active %}
+    active
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <!--利用bootstrap里面的方法珊格系统，设置左边右边歌4个珊格，这样就可以居中-->
+            <div class="col-xs-10 col-sm-7 col-xs-offset-1 col-sm-offset-3 col-md-4 col-md-offset-4">
+                {% if user.is_authenticated %}
+                    <h2>{{ user.username }}</h2>
+                    <ul>
+                        <li>昵称：<a href="#">修改昵称</a></li>
+                        <li>邮箱：{% if user.email %}
+                            {{ user.email }}
+                        {% else %}
+                            未绑定 <a href="#">绑定邮箱</a>
+                        {% endif %}</li>
+                        <li>上一次登录时间：{{ user.last_login | date:"Y-m-d H:i:s" }}</li>
+                        <li><a href="#">修改密码</a></li>
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

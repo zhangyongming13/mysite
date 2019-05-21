@@ -7,6 +7,7 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from .forms import LoginForm, RegForm
 from django.http import JsonResponse
+import re
 
 
 # 首页的处理函数
@@ -77,7 +78,7 @@ def login(request):
             # 根据进入login前的页面（也就是博客的具体页面）传入的链接，登录成功之后就返回博客
             # return redirect(request.GET.get('from', reverse('home')))
             original_url = request.GET.get('from', reverse('home'))
-            return render(request, 'login_logout_error.html', {'message':'登录成功！', 'redirect_to':original_url})
+            return render(request, 'login_logout_error.html', {'message':'登录成功！', 'message1':'原来的页面...', 'redirect_to':original_url})
     else:
         # get方法利用form表单生成对应input用于用户输入login_form
         # 实例化一个LoginForm类
@@ -107,7 +108,10 @@ def logout(request):
 
     # 获取到request请求头里面原本的网址信息，这样登录之后就跳回原来未登录前的页面
     referer = request.META.get('HTTP_REFERER', 'home')
-    return  render(request, 'login_logout_error.html', {'message': '注销成功！', 'redirect_to':referer})
+    zhang = re.split(r'/', referer)
+    if zhang[3] == 'user_info':
+        return render(request, 'login_logout_error.html', {'message':'注销成功！返回首页', 'message1':'首页...', 'redirect_to':'/'})
+    return  render(request, 'login_logout_error.html', {'message': '注销成功！', 'message1':'原来的页面...', 'redirect_to':referer})
 
 
 # 注册的处理方法
@@ -137,3 +141,8 @@ def register(request):
     context = {}
     context['reg_form'] = reg_form
     return render(request, 'register.html', context)
+
+
+def user_info(request):  # user的信息都可以在前端页面获取，这里不用返回数据
+    context = {}
+    return render(request, 'user_info.html', context)
