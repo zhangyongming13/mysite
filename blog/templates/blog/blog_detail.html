@@ -162,33 +162,6 @@
         </div>
     </div>
 </div>
-    <!-- 使用bootstrap里面的模态框 -->
-    <div class="modal fade" id="login_modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-                <form id="login_medal_form" action="" method="post">  <!--将数据传到login这个网页路径中-->
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">请登录</h4>
-                    </div>
-                    <div class="modal-body">
-                        {% csrf_token %}  <!--csrf令牌，避免被拦截-->
-                        <!--引入form表单login_form,利用for循环把login_form里面的数据单独拿出来-->
-                        {% for field in login_form %}
-                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            {{ field }}
-                        {% endfor %}
-{#                          {{ login_form }}#}
-                        <span id="login_modal_tip" class="text-danger"></span>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">登录</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 {% endblock %}
 
 {% block script_extends %}
@@ -419,23 +392,6 @@
                 }
             });
         }
-        $("#login_medal_form").submit(function (event) {
-            event.preventDefault();  //阻止页面提交数据之后进行刷新，让ajax判断刷新
-            $.ajax({
-                url:'{% url "login_for_medal" %}',
-                type:'POST',
-                data:$(this).serialize(),  //讲前端页面的数据返回给后端，通过上面的url
-                cache:false,
-                success:function(data){
-                    if(data['status']=='SUCCESS'){
-                        window.location.reload(); //进行页面刷新
-                    }
-                    else{
-                        $('#login_modal_tip').text('用户名或密码不正确！');
-                    }
-                }
-            });
-        });
     </script>
 {% endblock %}
 

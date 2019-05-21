@@ -4,7 +4,7 @@ from .models import Blog, BlogType
 from django.db.models import Count
 from django.conf import settings
 from read_statistics.utils import read_statistics_add_times
-from user.forms import LoginForm
+# from user.forms import LoginForm
 from django.contrib.contenttypes.models import ContentType
 from comment.models import Comment
 from comment.forms import CommentForm
@@ -108,7 +108,7 @@ def Blog_detail(request, blog_pk):
     context['previous_blog'] = Blog.objects.filter(created_time__gt=blog_detail.created_time).last()
     context['next_blog'] = Blog.objects.filter(created_time__lt=blog_detail.created_time).first()
     context['blog_detail'] = blog_detail
-    context['login_form'] = LoginForm()
+    # context['login_form'] = LoginForm()
 
     # 获取评论的博客的详情，创建博客评论的时候可以一一对应
     # comment_data = {}
