@@ -4,7 +4,7 @@ from .models import Blog, BlogType
 from django.db.models import Count
 from django.conf import settings
 from read_statistics.utils import read_statistics_add_times
-from mysite.views import LoginForm
+from user.forms import LoginForm
 from django.contrib.contenttypes.models import ContentType
 from comment.models import Comment
 from comment.forms import CommentForm

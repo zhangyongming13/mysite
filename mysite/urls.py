@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import home, login, logout, register, login_for_medal, user_info
+from .views import home
 
 urlpatterns = [
     path('', home, name='home'),  # 根目录，把之前的博客列表换成这个
@@ -14,11 +14,7 @@ urlpatterns = [
     path('comment/', include('comment.urls')),
     # path('likes/', include('likes.urls')),
     path('likes/', include('likes.urls')),
-    path('login/', login, name='login'),
-    path('login_for_medal', login_for_medal, name='login_for_medal'),
-    path('logout/', logout, name='logout'),
-    path('register/', register, name='register'),
-    path('user_info/', user_info, name='user_info'),
+    path('user/', include('user.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
