@@ -186,6 +186,7 @@
                     CKEDITOR.instances['id_text'].focus();
                 });
             }catch (e) {
+                alert('未登录，请先登录后回复！');
                 $('#login_modal').modal('show');
             }
         }
@@ -337,6 +338,7 @@
                     }
                     else{
                         if(data['code']==400){  //如过是用户未登录的错误那么就弹出登录框
+                            alert('未登录，请先登录后操作！');
                             $('#login_modal').modal('show');
                         }
                         else{
@@ -384,6 +386,7 @@
                     }
                     else{
                         if(data['code']==400){  //如过是用户未登录的错误那么就弹出登录框
+                            alert('未登录，请先登录后操作！');
                             $('#login_modal').modal('show');
                         }
                         else{

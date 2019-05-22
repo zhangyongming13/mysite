@@ -15,7 +15,8 @@
         <div class="row">
             <!--利用bootstrap里面的方法珊格系统，设置左边右边歌4个珊格，这样就可以居中-->
             <div class="col-xs-4 col-xs-offset-4">
-                <div class="panel panel-default">
+                {% if not user.is_authenticated %}
+                    <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">注册</h3>
                     </div>
@@ -35,6 +36,29 @@
                       </form>
                   </div>
                 </div>
+                {% else %}
+                    <p>
+                        已登录，还有<span id="sp">2</span>秒跳转到首页！
+                    </p>
+                    <script>
+                        onload=function () {
+                            setInterval(go,1000)
+                        };
+                        var x=1;
+                        function go() {
+
+                            if (x>=0){
+                                document.getElementById("sp").innerText=x;
+                            }else {
+                                location.href="/";
+                            }
+                            x--;
+                        }
+                    </script>
+{#                    <script type="text/javascript">#}
+{#                        window.location.href = '/';#}
+{#                    </script>#}
+                {% endif %}
             </div>
         </div>
     </div>
