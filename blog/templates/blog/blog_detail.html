@@ -175,15 +175,19 @@
             return str;
         };
         function reply(reply_comment_id){
-            // 点击回复的时候，被回复评论的值就需要变为被回复评论的PK值
-            $("#reply_comment_id").val(reply_comment_id);
-            var html = $("#content_" + reply_comment_id).html();
-            $("#reply_content").html(html);  // 取出被回复的内容然后放到reply_content这个元素中
-            $("#reply_content_container").show();
-            $('html').animate({scrollTop: $('#comment_form').offset().top - 60}, 300, function(){
-                // 获取到富文本编辑器，并聚焦
-                CKEDITOR.instances['id_text'].focus();
-            });
+            try {
+                    // 点击回复的时候，被回复评论的值就需要变为被回复评论的PK值
+                $("#reply_comment_id").val(reply_comment_id);
+                var html = $("#content_" + reply_comment_id).html();
+                $("#reply_content").html(html);  // 取出被回复的内容然后放到reply_content这个元素中
+                $("#reply_content_container").show();
+                $('html').animate({scrollTop: $('#comment_form').offset().top - 60}, 300, function(){
+                    // 获取到富文本编辑器，并聚焦
+                    CKEDITOR.instances['id_text'].focus();
+                });
+            }catch (e) {
+                $('#login_modal').modal('show');
+            }
         }
         {#<!--这句话的意思式获取到id为comment_form元素，然后获取到submit按钮，利用ajax进行异步提交-->#}
         $("#comment_form").submit(function () {
