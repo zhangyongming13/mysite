@@ -103,10 +103,10 @@ def change_nickname(request):
             return render(request, 'user/login_logout_error.html', {'message':'昵称修改成功','message1':'原来的页面', 'redirect_to':original_url})
     else:
         forms = ChangeNickname()
-        context = {}
-        context['return_back'] = original_url
-        context['page_title'] = '修改昵称'
-        context['forms_title'] = '输入新的昵称'
-        context['submit_text'] = '修改'
-        context['forms'] = forms
-        return render(request, 'user/forms.html', context)
+    context = {}
+    context['return_back'] = original_url
+    context['page_title'] = '修改昵称'
+    context['forms_title'] = '输入新的昵称'
+    context['submit_text'] = '修改'
+    context['forms'] = forms
+    return render(request, 'user/forms.html', context)

@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import auth
 from django.contrib.auth.models import User
+from .models import Profile
 
 
 class LoginForm(forms.Form):
@@ -73,8 +74,15 @@ class ChangeNickname(forms.Form):
         return self.cleaned_data
 
     def clean_nickname_new(self):
+        zhang = self.cleaned_data.get('nickname_new', '')
         nickname_new = self.cleaned_data.get('nickname_new', '').strip()
         if nickname_new == '':
             raise forms.ValidationError('昵称不能为空！')
-        else:
-            return nickname_new
+        # try:
+        #     zhang = Profile.objects.get(nickname=nickname_new)
+        #     raise forms.ValidationError('昵称已被占用！')
+        # except Exception as e:
+        #     pass
+        if Profile.objects.filter(nickname=zhang).exists():
+            raise forms.ValidationError('昵称已被占用！')
+        return nickname_new
