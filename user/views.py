@@ -1,8 +1,9 @@
 from django.shortcuts import render, reverse
 from django.contrib import auth
 from django.contrib.auth.models import User
-from .forms import LoginForm, RegForm
+from .forms import LoginForm, RegForm, ChangeNickname
 from django.http import JsonResponse
+from .models import Profile
 import re
 
 
@@ -88,3 +89,24 @@ def register(request):
 def user_info(request):  # user的信息都可以在前端页面获取，这里不用返回数据
     context = {}
     return render(request, 'user/user_info.html', context)
+
+
+def change_nickname(request):
+    original_url = request.GET.get('from', reverse('home'))
+
+    if request.method == 'POST':
+        forms = ChangeNickname(request.POST, user=request.user)
+        if forms.is_valid():
+            profile, created = Profile.objects.get_or_create(user=request.user)
+            profile.nickname = forms.cleaned_data['nickname_new']
+            profile.save()
+            return render(request, 'user/login_logout_error.html', {'message':'昵称修改成功','message1':'原来的页面', 'redirect_to':original_url})
+    else:
+        forms = ChangeNickname()
+        context = {}
+        context['return_back'] = original_url
+        context['page_title'] = '修改昵称'
+        context['forms_title'] = '输入新的昵称'
+        context['submit_text'] = '修改'
+        context['forms'] = forms
+        return render(request, 'user/forms.html', context)

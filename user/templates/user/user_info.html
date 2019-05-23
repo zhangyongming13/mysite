@@ -2,6 +2,9 @@
 {#另外一种引入css固态文件的方法#}
 {% load staticfiles %}
 
+{#加载这个自定义模板标签#}
+{% load user_tag %}
+
 {% block title %}
     我的网站|用户信息
 {% endblock %}
@@ -18,7 +21,7 @@
                 {% if user.is_authenticated %}
                     <h2>{{ user.username }}</h2>
                     <ul>
-                        <li>昵称：<a href="#">修改昵称</a></li>
+                        <li>昵称：{{ user.get_nickname }} <a href="{% url 'change_nickname' %}?from={{ request.get_full_path }}">修改昵称</a></li>
                         <li>邮箱：{% if user.email %}
                             {{ user.email }}
                         {% else %}

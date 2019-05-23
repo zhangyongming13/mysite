@@ -9,3 +9,29 @@ class Profile(models.Model):
 
     def __str__(self):
         return '<Profile: %s for %s>' % (self.nickname, self.user.username)
+
+
+# 进行动态绑定，让User含有get_nickname，比自定义模板标签更加简洁
+def get_nickname(self):
+    if Profile.objects.filter(user=self).exists():
+        profile = Profile.objects.get(user=self)
+        return profile.nickname
+    else:
+        return ''
+
+
+def has_nickname(self):
+    return Profile.objects.filter(user=self).exists()
+
+
+def get_nickname_or_username(self):
+    if Profile.objects.filter(user=self).exists():
+        profile = Profile.objects.get(user=self)
+        return profile.nickname
+    else:
+        return self.username
+
+
+User.get_nickname = get_nickname
+User.has_nickname = has_nickname
+User.get_nickname_or_username = get_nickname_or_username

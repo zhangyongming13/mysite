@@ -27,7 +27,7 @@ def update_comment(request):
                 comment.root = parent.root
             comment.parent = parent
             comment.reply_to = parent.user  # models设置该parent的时候，外键关联User，可以可以通过parent找到user
-            data['reply_to'] = comment.reply_to.username
+            data['reply_to'] = comment.reply_to.get_nickname_or_username()
         else:
             data['reply_to'] = ''
 
@@ -42,7 +42,7 @@ def update_comment(request):
         # 构建返回给前端ajax的数据
         data['status'] = 'SUCCESS'
         data['content_type'] = ContentType.objects.get_for_model(comment).model
-        data['username'] = comment.user.username
+        data['username'] = comment.user.get_nickname_or_username()
         data['comment_time'] = timezone.localtime(comment.comment_time).strftime('%Y-%m-%d %H:%M:%S')
         data['text'] = comment.text
         # return render(request, 'login_logout_error.html', {'message': '评论成功！', 'redirect_to': referer})

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{#另外一种引入css固态文件的方法#}
+{% load staticfiles %}
+
+{% block title %}
+    我的网站|{{ page_title }}
+{% endblock %}
+
+{% block nav_home_active %}
+    active
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <!--利用bootstrap里面的方法珊格系统，设置左边右边歌4个珊格，这样就可以居中-->
+            <div class="col-xs-10 col-sm-7 col-xs-offset-1 col-sm-offset-3 col-md-4 col-md-offset-4">
+                    <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ forms_title }}</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form action="" method="post">  <!--将数据传到login这个网页路径中-->
+                            {% csrf_token %}  <!--csrf令牌，避免被拦截-->
+                            <!--引入form表单login_form,利用for循环把login_form里面的数据单独拿出来-->
+                            {% for field in forms %}
+                                <!--如果这个标签不是隐形的才把他渲染出来-->
+                                {% if not field.is_hidden %}
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {% endif %}
+                                {{ field }}
+                                <!--用来填写错误信息-->
+                                <p class="text-danger">{{ field.errors.as_text }}</p>
+                            {% endfor %}
+{#                            {{ login_form }}#}
+                            <span class="pull-left text-danger">{{ login_form.non_field_errors }}</span>
+                            <div class="pull-right">
+                                <input type="submit" value="{{ submit_text }}" class="btn btn-primary">
+                                <button class="btn btn-default" onclick="window.location.href='{{ return_back }}'">返回</button>
+                            </div>
+                      </form>
+                  </div>
+                </div>
+{#                {% else %}#}
+{#                    <p>#}
+{#                        已登录，还有<span id="sp">2</span>秒跳转到首页！#}
+{#                    </p>#}
+{#                    <script>#}
+{#                        onload=function () {#}
+{#                            setInterval(go,1000)#}
+{#                        };#}
+{#                        var x=1;#}
+{#                        function go() {#}
+{##}
+{#                            if (x>=0){#}
+{#                                document.getElementById("sp").innerText=x;#}
+{#                            }else {#}
+{#                                location.href="/";#}
+{#                            }#}
+{#                            x--;#}
+{#                        }#}
+{#                    </script>#}
+{#                    <script type="text/javascript">#}
+{#                        window.location.href = '/';#}
+{#                    </script>#}
+{#                {% endif %}#}
+            </div>
+        </div>
+    </div>
+{% endblock %}

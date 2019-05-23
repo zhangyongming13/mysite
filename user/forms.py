@@ -53,3 +53,28 @@ class RegForm(forms.Form):
             raise forms.ValidationError('两次密码不一致')
         else:
             return password_again
+
+
+class ChangeNickname(forms.Form):
+    nickname_new = forms.CharField(label='新的昵称', max_length=10, widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'请输入新的昵称'}))
+
+    # 接收view实例化ChangeNickname()时候传递进来的user参数，用来判断用户是否登录
+    def __init__(self, *args, **kwargs):
+        if 'user' in kwargs:
+            self.user = kwargs.pop('user')
+        super(ChangeNickname, self).__init__(*args, **kwargs)
+
+    # 判断用户是否登录
+    def clean(self):
+        if self.user.is_authenticated:
+            self.cleaned_data['user'] = self.user
+        else:
+            raise forms.ValidationError('用户尚未登录！')
+        return self.cleaned_data
+
+    def clean_nickname_new(self):
+        nickname_new = self.cleaned_data.get('nickname_new', '').strip()
+        if nickname_new == '':
+            raise forms.ValidationError('昵称不能为空！')
+        else:
+            return nickname_new

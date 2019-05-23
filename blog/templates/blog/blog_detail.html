@@ -76,7 +76,7 @@
                     <!--这里的url是后面创建的用于前端向后台提交数据的-->
                     <form id="comment_form" action="{% url 'update_comment' %}" method="post">
                     <label>
-                        <p>{{ request.user }}, 欢迎评论！</p>
+                        <p>{{ user.get_nickname_or_username }}, 欢迎评论！</p>
                         <a href="{% url 'logout' %}">注销</a>
                     </label>
                     <!--回复的时候，回复富文本编辑器所在的位置-->
@@ -108,7 +108,7 @@
                     {% get_comment blog_detail as comments %}
                     {% for comment in comments %}
                     <div id="root_{{ comment.pk }}" class="comment-text">
-                        <span>{{ comment.user }}</span>
+                        <span>{{ comment.user.get_nickname_or_username }}</span>
                         <span>({{ comment.comment_time | date:"Y-m-d H:i:s"}}):</span>
                         <!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
                         <div id="content_{{ comment.pk }}">
@@ -131,7 +131,7 @@
                         <!--通过root_comment反向获取该条评论的所有回复-->
                         {% for reply in comment.root_comment.all %}
                             <div class="reply">
-                                <span>{{ reply.user.username }}</span>
+                                <span>{{ reply.user.get_nickname_or_username }}</span>
                                 <span>({{ reply.comment_time | date:"Y-m-d H:i:s" }})</span>
                                 <span>回复</span>
                                 <span>{{ reply.reply_to }}:</span>
