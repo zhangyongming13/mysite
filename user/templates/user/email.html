@@ -1,0 +1,55 @@
+{% extends "user/forms.html" %}
+
+{% block other-buttons %}
+    <button id="send_code" class="btn btn-primary">发送验证码</button>
+{% endblock %}
+
+{% block script_extends %}
+    <script type="text/javascript">
+        $('#send_code').click(function () {
+            $('#tip').text('');
+            event.preventDefault();  // 阻止默认默认表单的提交
+            var email = $('#id_email').val();
+            if(email == ""){
+                $('#tip').text('*邮箱不能为空');
+                return false;
+            }
+            // 发送验证码
+            $.ajax({
+                url:"{% url 'send_verification_code' %}",
+                type:"GET",
+                data:{
+                    'email':email
+                },
+                cache:false,
+                success:function (data) {
+                    if(data['status'] == 'ERROR'){
+                        alert(data['message']);
+                    }
+                    if(data['status'] == 'SUCCESS'){
+                        // 设置发送验证码之后，邮箱输入框变为只读形式readonly，避免绑定其他的邮箱
+                        $('#id_email').attr('readonly', 'readonly');
+                        alert('验证码发送成功，请前往邮箱查看验证码！');
+                        $(this).addClass('disabled');
+                        $(this).attr('disabled', true);
+                    }
+                }
+            });
+
+            //发送验证码之后就让发送按钮变灰，避免多次发送验证码
+            var time = 30;
+            $(this).text(time + 's'); //显示倒计时
+            var intervar = setInterval(() => {
+                if(time <= 0){
+                    clearInterval(intervar);
+                    $(this).removeClass('disabled');
+                    $(this).attr('disabled', false);
+                    $(this).text('发送验证码');
+                    return false;
+                }
+                time --;
+                $(this).text(time + 's');
+            }, 1000);  //每一秒执行上面的函数
+        });
+    </script>
+{% endblock %}

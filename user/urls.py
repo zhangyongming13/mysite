@@ -1,12 +1,13 @@
 from django.urls import path
-from .views import login, logout, register, login_for_medal, user_info, change_nickname
-
+from . import views
 
 urlpatterns = [
-    path('login/', login, name='login'),
-    path('login_for_medal', login_for_medal, name='login_for_medal'),
-    path('logout/', logout, name='logout'),
-    path('register/', register, name='register'),
-    path('user_info/', user_info, name='user_info'),
-    path('change_nickname/', change_nickname, name='change_nickname'),
+    path('login/', views.login, name='login'),
+    path('login_for_medal', views.login_for_medal, name='login_for_medal'),
+    path('logout/', views.logout, name='logout'),
+    path('register/', views.register, name='register'),
+    path('user_info/', views.user_info, name='user_info'),
+    path('change_nickname/', views.change_nickname, name='change_nickname'),
+    path('bind_email/', views.bind_email, name='bind_email'),
+    path('send_verification_code/', views.send_verification_code, name='send_verification_code'),
 ]

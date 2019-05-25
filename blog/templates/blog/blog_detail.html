@@ -134,7 +134,7 @@
                                 <span>{{ reply.user.get_nickname_or_username }}</span>
                                 <span>({{ reply.comment_time | date:"Y-m-d H:i:s" }})</span>
                                 <span>回复</span>
-                                <span>{{ reply.reply_to }}:</span>
+                                <span>{{ reply.reply_to.get_nickname_or_username }}:</span>
                                 <!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
                                 <div id="content_{{ reply.pk }}">
                                     {{ reply.text | safe}}

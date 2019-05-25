@@ -86,3 +86,50 @@ class ChangeNickname(forms.Form):
         if Profile.objects.filter(nickname=zhang).exists():
             raise forms.ValidationError('昵称已被占用！')
         return nickname_new
+
+
+class BindEmail(forms.Form):
+    email = forms.EmailField(
+        label="邮箱", widget=forms.EmailInput(
+            attrs={'class':'form-control', 'placeholder':'输入新的邮箱'}
+        )
+    )
+    verification_code = forms.CharField(
+        label="验证码", required=False, widget=forms.TextInput(
+            attrs={'class':'form-control', 'placeholder':'点击发送验证码'}
+        )
+    )
+
+    # 接收view实例化ChangeNickname()时候传递进来的user参数，用来判断用户是否登录
+    def __init__(self, *args, **kwargs):
+        if 'request' in kwargs:
+            self.request = kwargs.pop('request')
+        super(BindEmail, self).__init__(*args, **kwargs)
+
+    # 判断用户是否登录
+    def clean(self):
+        if self.request.user.is_authenticated:
+            self.cleaned_data['user'] = self.request.user
+        else:
+            raise forms.ValidationError('用户尚未登录！')
+
+        return self.cleaned_data
+
+    def clean_verification_code(self):
+        verification_code = self.cleaned_data.get('verification_code', '')
+        if verification_code.strip() == '':
+            raise forms.ValidationError('验证码不能为空！')
+
+        # 判断验证码，// 获取之前创建验证码的时候通过session保存的验证码
+        create_code = self.request.session.get('bind_email_code', '')
+        if create_code == '':
+            raise forms.ValidationError('其他错误，请刷新页面重试！')
+        if verification_code != create_code:
+            raise forms.ValidationError('验证码不正确！')
+        return verification_code
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email', '')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError('邮箱已被绑定，请换一个邮箱！')
+        return email

@@ -1,10 +1,14 @@
 from django.shortcuts import render, reverse
 from django.contrib import auth
 from django.contrib.auth.models import User
-from .forms import LoginForm, RegForm, ChangeNickname
+from .forms import LoginForm, RegForm, ChangeNickname, BindEmail
 from django.http import JsonResponse
 from .models import Profile
+from django.core.mail import send_mail
 import re
+import string
+import random
+import time
 
 
 def login_for_medal(request):
@@ -110,3 +114,59 @@ def change_nickname(request):
     context['submit_text'] = '修改'
     context['forms'] = forms
     return render(request, 'user/forms.html', context)
+
+
+def bind_email(request):
+    original_url = request.GET.get('from', reverse('home'))
+    if request.method == 'POST':
+        forms = BindEmail(request.POST, request=request)
+        if forms.is_valid():
+            email = forms.cleaned_data['email']
+            request.user.email = email
+            request.user.save()
+            return render(request, 'user/login_logout_error.html',
+                          {'message': '邮箱绑定成功', 'message1': '原来的页面', 'redirect_to': original_url})
+    else:
+        # 方法为GET。这创建BindEmail表单传给前段模板
+        forms = BindEmail()
+    context = {}
+    context['return_back'] = original_url
+    context['page_title'] = '绑定邮箱'
+    context['forms_title'] = '输入邮箱'
+    context['submit_text'] = '绑定'
+    context['forms'] = forms
+    return render(request, 'user/email.html', context)
+
+
+def send_verification_code(request):
+    data = {}
+    email = request.GET.get('email', '')
+    if User.objects.filter(email=email).exists():
+        data['status'] = 'ERROR'
+        data['message'] = '邮箱已被占用！'
+        return JsonResponse(data)
+
+    # 对验证码发送时间进行判断，避免验证码发送太频繁
+    now = int(time.time())
+    send_code_time = int(request.session.get('send_code_time', 0))
+    if now - send_code_time <= 30:
+        data['status'] = 'ERROR'
+        data['message'] = '验证码发送太频繁！请30秒后重试。'
+    else:
+        request.session['send_code_time'] = now
+
+        code = ''.join(random.sample(string.ascii_letters + string.digits, 4))
+        request.session['bind_email_code'] = code  # 利用session来保存这个验证码，验证需要用到
+        if email != '':
+            send_mail(  # 发送邮件
+                '绑定邮箱',
+                '验证码：%s' % code,
+                '790454963@qq.com',
+                [email],
+                fail_silently=False,
+            )
+            data['status'] = 'SUCCESS'
+        else:
+            data['status'] = 'ERROR'
+            data['message'] = '邮箱不能为空！'
+    return JsonResponse(data)
