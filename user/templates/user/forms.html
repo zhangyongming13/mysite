@@ -2,6 +2,10 @@
 {#另外一种引入css固态文件的方法#}
 {% load staticfiles %}
 
+{% block header_extends %}
+    <link rel="stylesheet" href="{% static 'forms.css' %}">
+{% endblock %}
+
 {% block title %}
     我的网站|{{ page_title }}
 {% endblock %}
@@ -30,48 +34,51 @@
                                 {% endif %}
                                 {{ field }}
                                 <!--用来填写错误信息-->
-                                <p class="text-danger">{{ field.errors.as_text }}</p>
+                                <div  id="div-tip">
+                                    <span id="tip1" class="text-danger">{{ field.errors.as_text }}</span>
+                                </div>
                             {% endfor %}
 {#                            {{ login_form }}#}
                             <div>
-                                <span id="tip" class="pull-left text-danger">{{ login_form.non_field_errors }}</span>
+                                <span id="tip" class="pull-left text-danger">{{ forms.non_field_errors }}</span>
                             </div>
+                            <span id="tip-password-different" class="text-danger"></span>
                             <div class="clearfix"></div>
-                            <div class="pull-left">
-                                {% block other-buttons %}
-                                {% endblock %}
-                            </div>
-                            <div class="pull-right">
-                                <input type="submit" value="{{ submit_text }}" class="btn btn-primary">
-                                <button class="btn btn-default" onclick="window.location.href='{{ return_back }}'">返回</button>
+                            <div class="buttom">
+                                <div class="pull-left">
+                                    {% block other-buttons %}
+                                    {% endblock %}
+                                </div>
+                                <div class="pull-right">
+                                    <input id="submit" type="submit" value="{{ submit_text }}" class="btn btn-primary">
+                                    <button class="btn btn-default" onclick="window.location.href='{{ return_back }}'">返回</button>
+                                </div>
                             </div>
                       </form>
                   </div>
                 </div>
-{#                {% else %}#}
-{#                    <p>#}
-{#                        已登录，还有<span id="sp">2</span>秒跳转到首页！#}
-{#                    </p>#}
-{#                    <script>#}
-{#                        onload=function () {#}
-{#                            setInterval(go,1000)#}
-{#                        };#}
-{#                        var x=1;#}
-{#                        function go() {#}
-{##}
-{#                            if (x>=0){#}
-{#                                document.getElementById("sp").innerText=x;#}
-{#                            }else {#}
-{#                                location.href="/";#}
-{#                            }#}
-{#                            x--;#}
-{#                        }#}
-{#                    </script>#}
-{#                    <script type="text/javascript">#}
-{#                        window.location.href = '/';#}
-{#                    </script>#}
-{#                {% endif %}#}
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block script_extends %}
+    <script type="text/javascript">
+        $('#id_password').blur(function cls() {
+            $('#tip').hide();
+        });
+        $(function () {
+            $('#id_password_new_again').blur(function () {
+                if($(this).val() != $('#id_password_new').val()){
+                    //$('#tip').text('两次密码不一致');
+                    $("#tip-password-different").html("*两次密码不一致");
+                    $('#submit').addClass('disabled');
+                }
+                else{
+                    $("#tip-password-different").html("");
+                    $('#submit').removeClass('disabled');
+                }
+            })
+        })
+    </script>
 {% endblock %}

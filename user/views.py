@@ -1,7 +1,7 @@
 from django.shortcuts import render, reverse
 from django.contrib import auth
 from django.contrib.auth.models import User
-from .forms import LoginForm, RegForm, ChangeNickname, BindEmail
+from .forms import LoginForm, RegForm, ChangeNickname, BindEmail, ChangeUserPassword
 from django.http import JsonResponse
 from .models import Profile
 from django.core.mail import send_mail
@@ -170,3 +170,32 @@ def send_verification_code(request):
             data['status'] = 'ERROR'
             data['message'] = '邮箱不能为空！'
     return JsonResponse(data)
+
+
+def change_user_password(request):
+    # original_url = request.GET.get('from', reverse('home'))
+    data = {}
+    if request.method == 'POST':
+        forms = ChangeUserPassword(request.POST, request=request)
+        if forms.is_valid():
+            password_new = forms.cleaned_data['password_new_again']
+            try:
+                user = User.objects.get(username=request.user.username)
+                user.set_password(password_new)
+                user.save()
+                # 修改密码之后退出登录
+                auth.logout(request)
+                return render(request, 'user/login_logout_error.html',
+                              {'message': '密码修改成功', 'message1': '登录页面', 'redirect_to': '/user/login/?from=/'})
+            except Exception as e:
+                data['status'] = 'ERROR'
+                data['message'] = e
+    else:
+        forms = ChangeUserPassword()
+    context = {}
+    # context['return_back'] = original_url
+    context['page_title'] = '修改密码'
+    context['forms_title'] = '输入原密码和新密码'
+    context['submit_text'] = '修改'
+    context['forms'] = forms
+    return render(request, 'user/forms.html', context)

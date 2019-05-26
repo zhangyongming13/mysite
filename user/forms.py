@@ -133,3 +133,61 @@ class BindEmail(forms.Form):
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError('邮箱已被绑定，请换一个邮箱！')
         return email
+
+
+class ChangeUserPassword(forms.Form):
+    password = forms.CharField(
+        label='原密码', max_length=30, min_length=6, widget=forms.PasswordInput(
+            attrs={'class':'form-control', 'placeholder':'输入原密码'}
+        )
+    )
+
+    password_new = forms.CharField(
+        label='新密码', max_length=30, min_length=6, widget=forms.PasswordInput(
+            attrs={'class': 'form-control', 'placeholder': '输入新密码'}
+        )
+    )
+
+    password_new_again = forms.CharField(
+        label='确认密码', max_length=30, min_length=6, widget=forms.PasswordInput(
+            attrs={'class': 'form-control', 'placeholder': '再输入一次新密码'}
+        )
+    )
+
+    def __init__(self, *args, **kwargs):
+        if 'request' in kwargs:
+            self.request = kwargs.pop('request')
+        super(ChangeUserPassword, self).__init__(*args, **kwargs)
+
+    # 判断用户是否登录
+    def clean(self):
+        if self.request.user.is_authenticated:
+            self.cleaned_data['user'] = self.request.user
+        else:
+            raise forms.ValidationError('用户尚未登录！')
+
+        password = self.cleaned_data['password']
+        user = auth.authenticate(username=self.request.user.username, password=password)
+        if user is None:
+            raise forms.ValidationError('原密码错误！')
+        return self.cleaned_data
+
+    def clean_password(self):
+        password = self.cleaned_data['password'].strip()
+        if password == '':
+            raise forms.ValidationError('原密码不能为空！')
+        return password
+
+    def clean_password_new_again(self):
+        password = self.cleaned_data['password']
+        password_new = self.cleaned_data['password_new']
+        password_new_again = self.cleaned_data['password_new_again']
+
+        if password_new == '' or password_new_again == '':
+            raise forms.ValidationError('密码不能为空！')
+        if password_new != password_new_again:
+            raise forms.ValidationError('两次密码不一致！')
+
+        if password == password_new_again:
+            raise forms.ValidationError('原密码和新密码不能相同！')
+        return password_new_again
