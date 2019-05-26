@@ -198,4 +198,4 @@ def change_user_password(request):
     context['forms_title'] = '输入原密码和新密码'
     context['submit_text'] = '修改'
     context['forms'] = forms
-    return render(request, 'user/forms.html', context)
+    return render(request, 'user/change_password.html', context)

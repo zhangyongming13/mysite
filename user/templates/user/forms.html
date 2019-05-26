@@ -35,7 +35,7 @@
                                 {{ field }}
                                 <!--用来填写错误信息-->
                                 <div  id="div-tip">
-                                    <span id="tip1" class="text-danger">{{ field.errors.as_text }}</span>
+                                    <span id="tip1" class="text-danger">{{ field.errors }}</span>
                                 </div>
                             {% endfor %}
 {#                            {{ login_form }}#}
@@ -60,25 +60,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
-
-{% block script_extends %}
-    <script type="text/javascript">
-        $('#id_password').blur(function cls() {
-            $('#tip').hide();
-        });
-        $(function () {
-            $('#id_password_new_again').blur(function () {
-                if($(this).val() != $('#id_password_new').val()){
-                    //$('#tip').text('两次密码不一致');
-                    $("#tip-password-different").html("*两次密码不一致");
-                    $('#submit').addClass('disabled');
-                }
-                else{
-                    $("#tip-password-different").html("");
-                    $('#submit').removeClass('disabled');
-                }
-            })
-        })
-    </script>
 {% endblock %}

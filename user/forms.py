@@ -189,5 +189,5 @@ class ChangeUserPassword(forms.Form):
             raise forms.ValidationError('两次密码不一致！')
 
         if password == password_new_again:
-            raise forms.ValidationError('原密码和新密码不能相同！')
+            raise forms.ValidationError('新密码和原密码不能相同！')
         return password_new_again
