@@ -52,7 +52,8 @@
                 url:"{% url 'send_verification_code' %}",
                 type:"GET",
                 data:{
-                    'email':email
+                    'email':email,
+                    'send_for':'register_code'
                 },
                 cache:false,
                 success:function (data) {

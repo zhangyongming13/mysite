@@ -87,6 +87,9 @@ def register(request):
             user.save()
             profile.save()
 
+            # 清楚session避免出现同一个认证码多次注册的情况
+            del request.session['register_code']
+
             # 注册之后进行登录操作
             user = auth.authenticate(username=username, password=password)
             auth.login(request, user)
@@ -142,6 +145,9 @@ def bind_email(request):
             email = forms.cleaned_data['email']
             request.user.email = email
             request.user.save()
+
+            # 清除session避免出现同一个认证码多次注册的情况
+            del request.session['register_code']
             return render(request, 'user/login_logout_error.html',
                           {'message': '邮箱绑定成功', 'message1': '原来的页面', 'redirect_to': original_url})
     else:
@@ -159,6 +165,7 @@ def bind_email(request):
 def send_verification_code(request):
     data = {}
     email = request.GET.get('email', '')
+    send_for = request.GET.get('send_for', '')
     if User.objects.filter(email=email).exists():
         data['status'] = 'ERROR'
         data['message'] = '邮箱已被占用！'
@@ -174,7 +181,7 @@ def send_verification_code(request):
         request.session['send_code_time'] = now
 
         code = ''.join(random.sample(string.ascii_letters + string.digits, 4))
-        request.session['bind_email_code'] = code  # 利用session来保存这个验证码，验证需要用到
+        request.session[send_for] = code  # 利用session来保存这个验证码，验证需要用到
         if email != '':
             send_mail(  # 发送邮件
                 '绑定邮箱',

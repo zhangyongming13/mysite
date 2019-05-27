@@ -92,7 +92,7 @@ class RegForm(forms.Form):
             raise forms.ValidationError('验证码不能为空！')
 
         # 判断验证码，// 获取之前创建验证码的时候通过session保存的验证码
-        create_code = self.request.session.get('bind_email_code', '')
+        create_code = self.request.session.get('register_code', '')
         if create_code == '':
             raise forms.ValidationError('其他错误，请刷新页面重试！')
         if verification_code != create_code:
