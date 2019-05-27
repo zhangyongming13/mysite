@@ -17,14 +17,14 @@
 {% block content %}
     <div class="skip_infomation">
         <p>
-        {{ message }}还有<span id="sp">4</span>秒跳转到{{ message1 }}
+        {{ message }}还有<span id="sp">2</span>秒跳转到{{ message1 }}
         <a href="{{ redirect_to }}">立即跳转！</a>
     </p>
     <script>
         onload=function () {
             setInterval(go,1000)
         };
-        var x=3;
+        var x=1;
         function go() {
 
             if (x>=0){

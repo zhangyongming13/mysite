@@ -39,6 +39,9 @@ def login(request):
             # 根据进入login前的页面（也就是博客的具体页面）传入的链接，登录成功之后就返回博客
             # return redirect(request.GET.get('from', reverse('home')))
             original_url = request.GET.get('from', reverse('home'))
+            if re.match(r'.*/user/register/.*', original_url):
+                return render(request, 'user/login_logout_error.html',
+                              {'message': '登录成功！', 'message1': '首页...', 'redirect_to': '/'})
             return render(request, 'user/login_logout_error.html', {'message':'登录成功！', 'message1':'原来的页面...', 'redirect_to':original_url})
     else:
         # get方法利用form表单生成对应input用于用户输入login_form
@@ -63,30 +66,45 @@ def logout(request):
 
 # 注册的处理方法
 def register(request):
+    original_url = request.GET.get('from', reverse('home'))
     # 和login方法类似，也需要判断式POST还是GET，POST进行账号注册，GET实例化
     # form并传递给前端页面
     if request.method == 'POST':
-        reg_form = RegForm(request.POST)
+        reg_form = RegForm(request.POST, request=request)
         if reg_form.is_valid():
             username = reg_form.cleaned_data['username']
             email = reg_form.cleaned_data['email']
             password = reg_form.cleaned_data['password']
+            nickname = reg_form.cleaned_data['nickname_new']
 
             # 创建用户
             user = User.objects.create_user(username, email, password)
+
+            # 昵称的保存方法，先创建自定义模型里面包含昵称的类
+            profile, created = Profile.objects.get_or_create(user=user)
+            profile.nickname = nickname
+
             user.save()
+            profile.save()
 
             # 注册之后进行登录操作
             user = auth.authenticate(username=username, password=password)
             auth.login(request, user)
             # 传递注册之前页面的链接信息，注册通过之后可以返回相关的页面
             original_url = request.GET.get('from', reverse('home'))
-            return render(request, 'user/login_logout_error.html', {'message': '注册成功！', 'redirect_to': original_url})
+            if re.match(r'.*/user/login/.*', original_url):
+                return render(request, 'user/login_logout_error.html',
+                              {'message': '注册成功！', 'message1': '首页...', 'redirect_to': '/'})
+            return render(request, 'user/login_logout_error.html', {'message': '注册成功！','message1':'原来的页面', 'redirect_to': original_url})
     else:
         # 实例化RegForm，传递给模板页面进行模板页面产生以及承载数据
         reg_form = RegForm()
     context = {}
-    context['reg_form'] = reg_form
+    context['return_back'] = original_url
+    context['page_title'] = '绑定邮箱'
+    context['forms_title'] = '输入邮箱'
+    context['submit_text'] = '绑定'
+    context['forms'] = reg_form
     return render(request, 'user/register.html', context)
 
 
@@ -176,6 +194,7 @@ def change_user_password(request):
     # original_url = request.GET.get('from', reverse('home'))
     data = {}
     if request.method == 'POST':
+        # 把前端传入的数据交给form进行数据的验证
         forms = ChangeUserPassword(request.POST, request=request)
         if forms.is_valid():
             password_new = forms.cleaned_data['password_new_again']
