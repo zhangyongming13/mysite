@@ -11,4 +11,6 @@ urlpatterns = [
     path('bind_email/', views.bind_email, name='bind_email'),
     path('send_verification_code/', views.send_verification_code, name='send_verification_code'),
     path('change_user_password/', views.change_user_password, name='change_user_password'),
+    path('forget_password/', views.forget_password, name='forget_password'),
+    path('check_email_user/', views.check_email_user, name='check_email_user'),
 ]

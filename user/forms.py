@@ -260,3 +260,71 @@ class ChangeUserPassword(forms.Form):
         if password == password_new_again:
             raise forms.ValidationError('新密码和原密码不能相同！')
         return password_new_again
+
+
+class ForgetPassword(forms.Form):
+    email = forms.EmailField(
+        label="邮箱", widget=forms.EmailInput(
+            attrs={'class': 'form-control', 'placeholder': '输入新的邮箱'}
+        )
+    )
+
+    password_new = forms.CharField(
+        label='新密码', max_length=30, min_length=6, widget=forms.PasswordInput(
+            attrs={'class': 'form-control', 'placeholder': '输入新密码'}
+        )
+    )
+
+    password_new_again = forms.CharField(
+        label='确认密码', max_length=30, min_length=6, widget=forms.PasswordInput(
+            attrs={'class': 'form-control', 'placeholder': '再输入一次新密码'}
+        )
+    )
+
+    verification_code = forms.CharField(
+        label="验证码", required=False, widget=forms.TextInput(
+            attrs={'class': 'form-control', 'placeholder': '点击发送验证码'}
+        )
+    )
+
+    def __init__(self, *args, **kwargs):
+        if 'request' in kwargs:
+            self.request = kwargs.pop('request')
+        super(ForgetPassword, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        email = self.cleaned_data['email']
+        password_new_again = self.cleaned_data['password_new_again']
+        # 检查该邮箱是否有对应的账号
+        if User.objects.filter(email=email).exists():
+            username = User.objects.get(email=email).username
+            # 检查新的密码和原来的密码是否一致
+            user = auth.authenticate(username=username, password=password_new_again)
+            if user is None:
+                return self.cleaned_data
+            else:
+                raise forms.ValidationError('新密码不能与原密码相同！')
+        else:
+            raise forms.ValidationError('该邮箱不存在对应的用户，请检查邮箱或者直接注册！')
+
+    def clean_password_new_again(self):
+        password_new = self.cleaned_data['password_new']
+        password_new_again = self.cleaned_data['password_new_again']
+        if password_new == '' or password_new_again == '':
+            raise forms.ValidationError('新密码不能为空！')
+        if password_new_again != password_new:
+            raise forms.ValidationError('两次输入的密码不一致！')
+        return password_new_again
+
+    def clean_verification_code(self):
+        verification_code = self.cleaned_data.get('verification_code', '')
+        if verification_code.strip() == '':
+            raise forms.ValidationError('验证码不能为空！')
+
+        # 判断验证码，// 获取之前创建验证码的时候通过session保存的验证码
+        create_code = self.request.session.get('forget_password_email_code', '')
+        if create_code == '':
+            raise forms.ValidationError('其他错误，请刷新页面重试！')
+        if verification_code != create_code:
+            raise forms.ValidationError('验证码不正确！')
+        return verification_code

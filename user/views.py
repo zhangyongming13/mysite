@@ -1,7 +1,7 @@
 from django.shortcuts import render, reverse
 from django.contrib import auth
 from django.contrib.auth.models import User
-from .forms import LoginForm, RegForm, ChangeNickname, BindEmail, ChangeUserPassword
+from .forms import LoginForm, RegForm, ChangeNickname, BindEmail, ChangeUserPassword, ForgetPassword
 from django.http import JsonResponse
 from .models import Profile
 from django.core.mail import send_mail
@@ -166,7 +166,8 @@ def send_verification_code(request):
     data = {}
     email = request.GET.get('email', '')
     send_for = request.GET.get('send_for', '')
-    if User.objects.filter(email=email).exists():
+    # 如果邮箱已存在并且send_for不是忘记密码的话表明这个邮箱已经被占用了
+    if User.objects.filter(email=email).exists() and send_for != 'forget_password_email_code':
         data['status'] = 'ERROR'
         data['message'] = '邮箱已被占用！'
         return JsonResponse(data)
@@ -225,3 +226,41 @@ def change_user_password(request):
     context['submit_text'] = '修改'
     context['forms'] = forms
     return render(request, 'user/change_password.html', context)
+
+
+def forget_password(request):
+    original_url = request.GET.get('from', reverse('home'))
+    if request.method == 'POST':
+        forms = ForgetPassword(request.POST, request=request)
+        # 验证通过
+        if forms.is_valid():
+            password_new_again = forms.cleaned_data['password_new_again']
+            email = forms.cleaned_data['email']
+            username = User.objects.get(email=email).username
+            user = User.objects.get(username=username)
+            user.set_password(password_new_again)
+            user.save()
+
+            # 清除session避免出现同一个认证码多次注册的情况
+            del request.session['forget_password_email_code']
+            return render(request, 'user/login_logout_error.html',
+                          {'message': '密码修改成功', 'message1': '登录页面', 'redirect_to': original_url})
+    else:
+        forms = ForgetPassword()
+    context = {}
+    context['page_title'] = '忘记密码'
+    context['forms_title'] = '重新设置密码'
+    context['submit_text'] = '修改'
+    context['forms'] = forms
+    return render(request, 'user/forget_password.html', context)
+
+
+def check_email_user(request):
+    data = {}
+    email = request.GET.get('email')
+    if User.objects.filter(email=email).exists():
+        data['status'] = 'SUCCESS'
+    else:
+        data['status'] = 'ERROR'
+        data['message'] = '该邮箱不存在对应的用户，请检查邮箱或者直接注册！'
+    return JsonResponse(data)
