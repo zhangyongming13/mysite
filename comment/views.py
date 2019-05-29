@@ -33,6 +33,9 @@ def update_comment(request):
 
         comment.save()
 
+        # 评论完成，发送邮件通知
+        comment.send_email()
+
         data['pk'] = comment.pk
         # 这是一条评论的话
         if comment.root is None:

@@ -4,6 +4,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.contrib.contenttypes.models import ContentType
 from read_statistics.models import ReadNum, ReadNumExpandMethod, ReadDetail
 from django.contrib.contenttypes.fields import GenericRelation
+from django.shortcuts import reverse
 
 
 # 创建Blog_Type模型
@@ -38,6 +39,14 @@ class Blog(models.Model, ReadNumExpandMethod):
     #         return self.readnum.read_num
     #     except exceptions.ObjectDoesNotExist:
     #         return 0
+
+    def get_url(self):
+        # 返回每一篇博客对应的链接
+        return reverse('blog_detail', kwargs={'blog_pk':self.pk})
+
+    # 返回用户的邮箱
+    def get_email(self):
+        return self.author.email
 
     # 使后台管理更清晰明了
     def __str__(self):
