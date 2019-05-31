@@ -1,4 +1,5 @@
 import threading
+import re
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -55,17 +56,20 @@ class Comment(models.Model):
         else:
             subject = '有人回复你的评论'
             email = self.reply_to.email
+
         if email != '':
-            # 邮件发送的内容式html模板加上参数，和之前网页是一样的
-            context = {}
-            # 获取comment里面的text
-            context['comment_text'] = self.text
-            context['url'] = self.content_object.get_url()
-            text = render_to_string("comment/send_email.html", context)
-            # 创建线程
-            send_mail = SendEmail(subject, text, email)
-            # 开始线程
-            send_mail.start()
+            # 判断用户输入的邮箱格式是否正确
+            if re.match(r'^[a-zA-Z0-9_](\w)*(_)*@[a-zA-Z0-9_]+\.[a-zA-Z]+$', email):
+                # 邮件发送的内容式html模板加上参数，和之前网页是一样的
+                context = {}
+                # 获取comment里面的text
+                context['comment_text'] = self.text
+                context['url'] = self.content_object.get_url()
+                text = render_to_string("comment/send_email.html", context)
+                # 创建线程
+                send_mail = SendEmail(subject, text, email)
+                # 开始线程
+                send_mail.start()
 
     def __str__(self):
         return self.text

@@ -24,6 +24,7 @@
                 },
                 cache:false,
                 success:function (data) {
+                    flag = data['status'];
                     if(data['status'] == 'ERROR'){
                         alert(data['message']);
                     }
@@ -37,20 +38,22 @@
                 }
             });
 
-            //发送验证码之后就让发送按钮变灰，避免多次发送验证码
-            var time = 30;
-            $(this).text(time + 's'); //显示倒计时
-            var intervar = setInterval(() => {
-                if(time <= 0){
-                    clearInterval(intervar);
-                    $(this).removeClass('disabled');
-                    $(this).attr('disabled', false);
-                    $(this).text('发送验证码');
-                    return false;
-                }
-                time --;
-                $(this).text(time + 's');
-            }, 1000);  //每一秒执行上面的函数
+            if(flag == 'SUCCESS'){
+                //发送验证码之后就让发送按钮变灰，避免多次发送验证码
+                var time = 30;
+                $(this).text(time + 's'); //显示倒计时
+                var intervar = setInterval(() => {
+                    if(time <= 0){
+                        clearInterval(intervar);
+                        $(this).removeClass('disabled');
+                        $(this).attr('disabled', false);
+                        $(this).text('发送验证码');
+                        return false;
+                    }
+                    time --;
+                    $(this).text(time + 's');
+                }, 1000);  //每一秒执行上面的函数
+            }
         });
     </script>
 {% endblock %}

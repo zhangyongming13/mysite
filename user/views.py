@@ -166,6 +166,13 @@ def send_verification_code(request):
     data = {}
     email = request.GET.get('email', '')
     send_for = request.GET.get('send_for', '')
+
+    # 判断用户输入的邮箱格式是否正确
+    if not re.match(r'^[a-zA-Z0-9_](\w)*(_)*@[a-zA-Z0-9_]+\.[a-zA-Z]+$', email):
+        data['status'] = 'ERROR'
+        data['message'] = '输入的邮箱格式不对'
+        return JsonResponse(data)
+
     # 如果邮箱已存在并且send_for不是忘记密码的话表明这个邮箱已经被占用了
     if User.objects.filter(email=email).exists() and send_for != 'forget_password_email_code':
         data['status'] = 'ERROR'
@@ -184,13 +191,19 @@ def send_verification_code(request):
         code = ''.join(random.sample(string.ascii_letters + string.digits, 4))
         request.session[send_for] = code  # 利用session来保存这个验证码，验证需要用到
         if email != '':
-            send_mail(  # 发送邮件
-                '绑定邮箱',
-                '验证码：%s' % code,
-                '790454963@qq.com',
-                [email],
-                fail_silently=False,
-            )
+            try:
+                send_mail(  # 发送邮件
+                    '绑定邮箱',
+                    '验证码：%s' % code,
+                    '790454963@qq.com',
+                    [email],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                data['status'] = 'ERROR'
+                error_detail = e.args[0][email]
+                data['message'] = '错误码：' + str(error_detail[0]) + '，错误信息：' + str(error_detail[1], 'utf-8')
+                return JsonResponse(data)
             data['status'] = 'SUCCESS'
         else:
             data['status'] = 'ERROR'
