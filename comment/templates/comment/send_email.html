@@ -1,3 +1,5 @@
-{{ comment_text | safe }}
-<br>
-<a href="{{ url }}">点击查看</a>
+<!--关闭自动转译避免收到的邮件含有html标签-->
+{% autoescape off %}
+    <p style="font-weight: bolder">{{ comment_text}}</p>
+    <a href="{{ url }}">点击查看</a>
+{% endautoescape %}
