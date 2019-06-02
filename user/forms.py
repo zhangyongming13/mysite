@@ -105,7 +105,7 @@ class RegForm(forms.Form):
         create_code = self.request.session.get('register_code', '')
         if create_code == '':
             raise forms.ValidationError('其他错误，请刷新页面重试！')
-        if verification_code != create_code:
+        if verification_code.lower() != create_code.lower():
             raise forms.ValidationError('验证码不正确！')
         return verification_code
 
@@ -192,7 +192,7 @@ class BindEmail(forms.Form):
         create_code = self.request.session.get('bind_email_code', '')
         if create_code == '':
             raise forms.ValidationError('其他错误，请刷新页面重试！')
-        if verification_code != create_code:
+        if verification_code.lower() != create_code.lower():
             raise forms.ValidationError('验证码不正确！')
         return verification_code
 
@@ -265,7 +265,7 @@ class ChangeUserPassword(forms.Form):
 class ForgetPassword(forms.Form):
     email = forms.EmailField(
         label="邮箱", widget=forms.EmailInput(
-            attrs={'class': 'form-control', 'placeholder': '输入新的邮箱'}
+            attrs={'class': 'form-control', 'placeholder': '输入绑定的邮箱'}
         )
     )
 
@@ -325,6 +325,6 @@ class ForgetPassword(forms.Form):
         create_code = self.request.session.get('forget_password_email_code', '')
         if create_code == '':
             raise forms.ValidationError('其他错误，请刷新页面重试！')
-        if verification_code != create_code:
+        if verification_code.lower() != create_code.lower():
             raise forms.ValidationError('验证码不正确！')
         return verification_code

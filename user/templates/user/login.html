@@ -35,7 +35,7 @@
                             <div class="clearfix"></div>
                             <div class="pull-left">
 {#                              <button class="btn btn-primary" onclick="window.location.href='{% url 'forget_password' %}?from={{ request.get_full_path }}'">忘记密码</button>#}
-                                <a class="btn btn-primary" href="{% url 'forget_password' %}?from={{ request.get_full_path }}">忘记密码</a>
+                                <a href="{% url 'forget_password' %}?from={{ request.get_full_path }}">忘记密码?</a>
                             </div>
                             <div class="pull-right">
                                 <input type="submit" value="登录" class="btn btn-primary">

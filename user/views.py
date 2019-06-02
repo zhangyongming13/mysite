@@ -5,6 +5,7 @@ from .forms import LoginForm, RegForm, ChangeNickname, BindEmail, ChangeUserPass
 from django.http import JsonResponse
 from .models import Profile
 from django.core.mail import send_mail
+from django.conf import settings
 import re
 import string
 import random
@@ -195,14 +196,17 @@ def send_verification_code(request):
                 send_mail(  # 发送邮件
                     '绑定邮箱',
                     '验证码：%s' % code,
-                    '790454963@qq.com',
+                    settings.EMAIL_HOST_USER,
                     [email],
                     fail_silently=False,
                 )
-            except Exception as e:
+            except Exception as e:  # 返回邮箱发送失败的详情
                 data['status'] = 'ERROR'
-                error_detail = e.args[0][email]
-                data['message'] = '错误码：' + str(error_detail[0]) + '，错误信息：' + str(error_detail[1], 'utf-8')
+                try:
+                    error_detail = e.args[0][email]
+                    data['message'] = '错误码：' + str(error_detail[0]) + '，错误信息：' + str(error_detail[1], 'utf-8')
+                except Exception as a:
+                    data['message'] = str(e)
                 return JsonResponse(data)
             data['status'] = 'SUCCESS'
         else:
