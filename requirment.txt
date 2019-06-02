@@ -1,5 +1,7 @@
 Django==2.1
 django-ckeditor==5.7.0
 django-js-asset==1.2.2
+mysqlclient==1.4.2.post1
 Pillow==6.0.0
+PyMySQL==0.9.3
 pytz==2019.1
