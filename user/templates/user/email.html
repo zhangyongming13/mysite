@@ -6,6 +6,7 @@
 
 {% block script_extends %}
     <script type="text/javascript">
+        {#flag = 'ERROR';#}
         $('#send_code').click(function () {
             $('#tip').text('');
             event.preventDefault();  // 阻止默认默认表单的提交
@@ -24,36 +25,49 @@
                 },
                 cache:false,
                 success:function (data) {
-                    flag = data['status'];
                     if(data['status'] == 'ERROR'){
                         alert(data['message']);
                     }
                     if(data['status'] == 'SUCCESS'){
+                        {#flag = data['status'];#}
                         // 设置发送验证码之后，邮箱输入框变为只读形式readonly，避免绑定其他的邮箱
                         $('#id_email').attr('readonly', 'readonly');
+                        $('#send_code').addClass('disabled');
+                        $('#send_code').attr('disabled', true);
                         alert('验证码发送成功，请前往邮箱查看验证码！');
-                        $(this).addClass('disabled');
-                        $(this).attr('disabled', true);
+                        var time = 30;
+                        $('#send_code').text(time + 's'); //显示倒计时
+                        var intervar = setInterval(() => {
+                            if(time <= 0){
+                                clearInterval(intervar);
+                                $('#send_code').removeClass('disabled');
+                                $('#send_code').attr('disabled', false);
+                                $('#send_code').text('发送验证码');
+                                return false;
+                            }
+                            time --;
+                            $('#send_code').text(time + 's');
+                        }, 1000);  //每一秒执行上面的函数
                     }
                 }
             });
 
-            if(flag == 'SUCCESS'){
-                //发送验证码之后就让发送按钮变灰，避免多次发送验证码
-                var time = 30;
-                $(this).text(time + 's'); //显示倒计时
-                var intervar = setInterval(() => {
-                    if(time <= 0){
-                        clearInterval(intervar);
-                        $(this).removeClass('disabled');
-                        $(this).attr('disabled', false);
-                        $(this).text('发送验证码');
-                        return false;
-                    }
-                    time --;
-                    $(this).text(time + 's');
-                }, 1000);  //每一秒执行上面的函数
-            }
+            {#if(flag == 'SUCCESS'){#}
+            {#    //发送验证码之后就让发送按钮变灰，避免多次发送验证码#}
+            {#    var time = 30;#}
+            {#    $(this).text(time + 's'); //显示倒计时#}
+            {#    var intervar = setInterval(() => {#}
+            {#        if(time <= 0){#}
+            {#            clearInterval(intervar);#}
+            {#            $('#send_code').removeClass('disabled');#}
+            {#            $('#send_code').attr('disabled', false);#}
+            {#            $('#send_code').text('发送验证码');#}
+            {#            return false;#}
+            {#        }#}
+            {#        time --;#}
+            {#        $(this).text(time + 's');#}
+            {#    }, 1000);  //每一秒执行上面的函数#}
+            //}
         });
     </script>
 {% endblock %}
