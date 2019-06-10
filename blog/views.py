@@ -1,9 +1,12 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, reverse
 from django.core.paginator import Paginator
 from .models import Blog, BlogType
 from django.db.models import Count
 from django.conf import settings
 from read_statistics.utils import read_statistics_add_times
+from .forms import CreateBlogForm
+from django.http import JsonResponse
+from user.forms import LoginForm
 # from user.forms import LoginForm
 from django.contrib.contenttypes.models import ContentType
 from comment.models import Comment
@@ -120,3 +123,55 @@ def Blog_detail(request, blog_pk):
     # 设置发送给浏览器的cookie内容，cookie超时时间默认值，或者浏览器关闭的时候cookie才会失效
     response.set_cookie('blog_%s_readed' % blog_pk, 'true')
     return response
+
+
+# 创建博客
+def Create_blog(request):
+    original_url = request.GET.get('from', reverse('home'))
+    if request.method == 'POST':
+
+        # 实例化这个表单，如果下面的验证出现问题的话，传给前端页面的这个forms就带有相关的错误信息了
+        forms = CreateBlogForm(request.POST, request=request)
+        if forms.is_valid():
+            title = forms.cleaned_data['title']
+            blog_type = forms.cleaned_data['blog_type']
+            text = forms.cleaned_data['text']
+
+            # 创建新的博客，使用create
+            blog = Blog.objects.create(title=title, blog_type=blog_type, content=text, author=request.user, )
+            now_blog_url = '/blog/' + str(blog.pk)  # 翻遍转到新的博客的详情页
+            return render(request, 'user/login_logout_error.html',{'message': '博客创建成功', 'message1': '新增的博客详情页', 'redirect_to': now_blog_url})
+    else:
+        # 　方法为ｇｅｔ的时候就是需要新实例化有个表单，不然就是原来的
+        forms = CreateBlogForm()
+    context = {}
+    context['page_title'] = '创建新的博客'
+    context['forms_title'] = '创建新的博客'
+    context['submit_text'] = '提交'
+    context['return_back'] = original_url
+    # 这个表单有可能是上面is_valid不通过带有错误新的的form，也可能式新建的
+    context['create_blog_form'] = forms
+    return render(request, 'blog/create_blog.html',context)
+
+
+# 实时检查博客标题是否被暂用的方法
+def check_title_exists(request):
+    data = {}
+    title = request.GET.get('title')
+    if Blog.objects.filter(title=title).exists():
+        data['status'] = 'ERROR'
+        data['message'] = '已存在该标题的博客，请换个标题！'
+    else:
+        data['status'] = 'SUCCESS'
+    return JsonResponse(data)
+
+
+# 检查用户是否登录
+def check_login_status(request):
+    data = {}
+    # user = request.GET.get('request_user')
+    if request.user.is_authenticated:
+       data['status'] = 'SUCCESS'
+    else:
+        data['status'] = 'ERROR'
+    return JsonResponse(data)

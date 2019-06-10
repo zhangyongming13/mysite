@@ -43,6 +43,9 @@
                 {% endblock %}"><a href="{% url 'home' %}">首页</a></li>
                 <li class="{% block nav_blog_active %}
                 {% endblock %}"><a href="{% url 'blog_list' %}">博客</a></li>
+                <li class="{% block nav_create_active %}
+{#                {% endblock %}"><a href="{% url 'check_login_status' %}?from={{ request.get_full_path }}">发表博客</a></li>#}
+                {% endblock %}"><a href="{% url 'Create_blog' %}?from={{ request.get_full_path }}">发表博客</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">  <!--右边的用户操作-->
 {#                    <!--判断用户是否登录，是由内容{% block content %}里面的user进行判断的-->#}
@@ -97,7 +100,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">登录</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+{#                        当点击返回的时候，返回到原来的页面#}
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.location.href='{{ return_back }}'">取消</button>
                     </div>
                 </form>
             </div>

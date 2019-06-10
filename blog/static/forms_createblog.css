@@ -1,0 +1,28 @@
+div.buttom {
+    margin-top: 1em;
+}
+
+div.content{
+    margin-top: 5em;
+}
+
+.form-control{
+    display: inline-block;
+}
+
+#id_title{
+    width: 60%;
+}
+
+div.form-every{
+    margin-top: 1em;
+}
+
+#id_blog_type{
+    height: 34px;
+    width: 36%;
+}
+
+div.form-every label{
+    display: block;
+}

@@ -162,9 +162,35 @@ CKEDITOR_CONFIGS = {
                     ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak'],
                     ['Styles', 'Format', 'Font', 'FontSize'],
                     ['TextColor', 'BGColor'],
-
                     ),
         'extraPlugins': 'codesnippet',
-    }
+    },
+    # 创建博客的ckeditor的样式
+    'create_blog': {
+            'skin': 'moono-lisa',
+            'toolbar_Basic': [
+                ['Source', '-', 'Bold', 'Italic']
+            ],
+            'toolbar': (['div', 'Source', '-', 'Save', 'NewPage', 'Preview', '-', 'Templates'],
+                        ['Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Print', 'SpellChecker', 'Scayt'],
+                        ['Undo', 'Redo', '-', 'Find', 'Replace', '-', 'SelectAll', 'RemoveFormat', '-', 'Maximize',
+                         'ShowBlocks', '-', "CodeSnippet", 'Subscript', 'Superscript'],
+                        ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton',
+                         'HiddenField'],
+                        ['Bold', 'Italic', 'Underline', 'Strike', '-'],
+                        ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote'],
+                        ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+                        ['Link', 'Unlink', 'Anchor'],
+                        ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak'],
+                        ['Styles', 'Format', 'Font', 'FontSize'],
+                        ['TextColor', 'BGColor'],
+                        ),
+            'extraPlugins': 'codesnippet',
+            'width': '100%',
+            'height': '600',
+            'tabSpaces': 4,
+            'removePlugins': 'elementspath',  # 去掉底框
+            'resize_enabled': False,
+        }
 }
 

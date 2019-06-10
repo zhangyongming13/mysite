@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{#另外一种引入css固态文件的方法#}
+{% load staticfiles %}
+
+{% block header_extends %}
+    <link rel="stylesheet" href="{% static 'forms_createblog.css' %}">
+    <link rel="stylesheet" href="/static/googlecode.css">
+    <script src="/static/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+{% endblock %}
+
+{% block title %}
+    我的网站|{{ page_title }}
+{% endblock %}
+
+{% block nav_create_active %}
+    active
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <!--利用bootstrap里面的方法珊格系统，设置左边右边歌4个珊格，这样就可以居中-->
+            <div class="">
+                    <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{{ forms_title }}</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form action="{% url 'Create_blog' %}" method="post">  <!--将数据传到login这个网页路径中-->
+                            {% csrf_token %}  <!--csrf令牌，避免被拦截-->
+                            <!--引入form表单login_form,利用for循环把login_form里面的数据单独拿出来-->
+                            {% for field in create_blog_form %}
+                                <!--如果这个标签不是隐形的才把他渲染出来-->
+                                <div class="form-every">
+                                    {% if not field.is_hidden %}
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}：</label>
+                                    {{ field }}
+                                    {% endif %}
+                                </div>
+                                <!--用来填写错误信息-->
+                                <div  id="div-tip">
+                                    <span id="tip1" class="text-danger">{{ field.errors }}</span>
+                                </div>
+                            {% endfor %}
+{#                            {{ login_form }}#}
+                            <div>
+                                <span id="tip" class="pull-left text-danger">{{ forms.non_field_errors }}</span>
+                            </div>
+                            <span id="tip-password-different" class="text-danger"></span>
+                            <div class="clearfix"></div>
+                            <div class="buttom">
+                                <div class="pull-left">
+                                    {% block other-buttons %}
+                                    {% endblock %}
+                                </div>
+                                <div class="pull-right">
+                                    <input id="submit" type="submit" value="{{ submit_text }}" class="btn btn-primary">
+                                    <button class="btn btn-default" onclick="window.location.href='{{ return_back }}'">返回</button>
+                                </div>
+                            </div>
+                      </form>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script_extends %}
+    <script type="text/javascript">
+        // 创建博客的页面一打开就检查用户是否登录
+        window.onload = function(){
+            {#alert("hello");#}
+            $(function () {
+                $.ajax({
+                url:"{% url 'check_login_status' %}",
+                type:"GET",
+                data:{
+                },
+                cache:false,
+                success:function (data) {
+                    if(data['status'] == 'ERROR'){
+                        alert('未登录，请先登录后操作！');
+                        $('#login_modal').modal('show');
+                        }
+                    }
+                })
+            })
+        };
+
+        // 实时检查标题输入框是否输入，并且输入的标题是否已经被占用
+        $(function () {
+            $('#id_title').blur(function () {
+                if($(this).val != ''){
+                    var title = $(this).val();
+                    $.ajax({
+                        url:"{% url 'check_title_exists' %}",
+                        type:"GET",
+                        data:{
+                            'title':title
+                        },
+                        cache: false,
+                        success:function (data) {
+                            if(data['status'] == 'ERROR'){
+                                alert(data['message']);
+                                $('#submit').addClass('disabled');
+                                $('#submit').attr('disabled',true);
+                            }
+                            else{
+                                $('#submit').removeClass('disabled');
+                                $('#submit').attr('disabled', false);
+                            }
+                        }
+                    })
+                }
+                else{
+                    $('#submit').addClass('disabled');
+                    $('#submit').attr('disabled',true);
+                }
+            })
+        });
+    </script>
+{% endblock %}

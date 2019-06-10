@@ -9,4 +9,7 @@ urlpatterns = [
     path('<int:blog_pk>', views.Blog_detail, name='blog_detail'),
     path('blog_with_type/<int:blog_type_pk>', views.Blog_with_type, name='blog_with_type'),
     path('blog_with_date/<int:year>/<int:month>', views.blos_with_date, name='blos_with_date'),
+    path('Create_blog', views.Create_blog, name='Create_blog'),
+    path('check_title_exists', views.check_title_exists, name='check_title_exists'),
+    path('check_login_status', views.check_login_status, name='check_login_status'),
 ]
