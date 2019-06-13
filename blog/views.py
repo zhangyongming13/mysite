@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, reverse
+from django.shortcuts import render, get_object_or_404, reverse, render_to_response
 from django.core.paginator import Paginator
 from .models import Blog, BlogType
 from django.db.models import Count
@@ -175,3 +175,19 @@ def check_login_status(request):
     else:
         data['status'] = 'ERROR'
     return JsonResponse(data)
+
+
+# 获取当前用户的所有博客
+def user_blog(request):
+    if request.user.is_authenticated:
+        # 获取当前用户的所有博客
+        user_blogs = Blog.objects.filter(author=request.user.pk)
+
+        # 利用所有博客获取一些公共的数据比如博客的分类，日期分类等，之所以需要这些信息
+        # 是因为继承的式blog_list.html的模板，所以需要这些信息
+        context = get_common_blog_data(request, user_blogs)
+
+        username = request.user.username
+        context['page_of_blogs'] = user_blogs
+        context['user_name'] = username
+        return render(request, 'blog/user_blog.html', context)

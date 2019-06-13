@@ -12,4 +12,5 @@ urlpatterns = [
     path('Create_blog', views.Create_blog, name='Create_blog'),
     path('check_title_exists', views.check_title_exists, name='check_title_exists'),
     path('check_login_status', views.check_login_status, name='check_login_status'),
+    path('user_blog', views.user_blog, name='user_blog'),
 ]

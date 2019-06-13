@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load blog_types %}
 <!doctype html>
 <html lang="zh-CN">
 <head>
@@ -42,10 +43,39 @@
                 <li class="{% block nav_home_active %}
                 {% endblock %}"><a href="{% url 'home' %}">首页</a></li>
                 <li class="{% block nav_blog_active %}
-                {% endblock %}"><a href="{% url 'blog_list' %}">博客</a></li>
+                {% endblock %} dropdown">
+                    <a href="{% url 'blog_list' %}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            博客分类
+                        <span class="caret"></span>
+                    </a>
+{#                    <a href="{% url 'blog_list' %}">博客</a>#}
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'blog_list' %}">全部博客</a></li>
+                        <!--利用自定义模板标签获取所有的博客类型-->
+                        {% get_all_blog_type as blog_types %}
+                        {% for blog_type in blog_types %}
+                            <li><a href="{% url 'blog_with_type' blog_type.pk %}">{{ blog_type.blog_type }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
                 <li class="{% block nav_create_active %}
 {#                {% endblock %}"><a href="{% url 'check_login_status' %}?from={{ request.get_full_path }}">发表博客</a></li>#}
                 {% endblock %}"><a href="{% url 'Create_blog' %}?from={{ request.get_full_path }}">发表博客</a></li>
+{#                <li class="{% block nav_blog_type_active %}#}
+{#                {% endblock %}">#}
+{#                    <li class="dropdown">#}
+{#                        <a href="{% url 'blog_list' %}" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">#}
+{#                            博客分类#}
+{#                            <span class="caret"></span>#}
+{#                        </a>#}
+{#                        <ul class="dropdown-menu">#}
+{#                            {% get_all_blog_type as blog_types %}#}
+{#                            {% for blog_type in blog_types %}#}
+{#                                <li><a href="{% url 'blog_with_type' blog_type.pk %}">{{ blog_type.blog_type }}</a></li>#}
+{#                            {% endfor %}#}
+{#                        </ul>#}
+{#                    </li>#}
+{#                </li>#}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">  <!--右边的用户操作-->
 {#                    <!--判断用户是否登录，是由内容{% block content %}里面的user进行判断的-->#}
@@ -63,6 +93,7 @@
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
+                            <li><a href="{% url 'user_blog' %}">我的博客</a></li>
                             <li><a href="{% url 'user_info' %}">个人资料</a></li>
                             <li><a href="{% url 'admin:index' %}">后台管理</a></li>
 {#                            <li role="separator" class="divider"></li>分割线#}
@@ -108,6 +139,7 @@
         </div>
     </div>
     <script type="text/javascript">
+        // 弹出登录窗口进行登录
         $("#login_medal_form").submit(function (event) {
             event.preventDefault();  //阻止页面提交数据之后进行刷新，让ajax判断刷新
             $.ajax({
@@ -125,6 +157,20 @@
                 }
             });
         });
+
+        // 页面加载完成之后进行下面的操作
+        $(document).ready(function () {
+            dropdownOpen();
+        });
+        function dropdownOpen() {
+            // 当鼠标移到class为dropdown的li标签时添加open的class这样下来菜单就打开了
+            $('li.dropdown').mouseover(function () {
+                $(this).addClass('open');
+            }).mouseout(function () {
+                //鼠标离开的时候的操作，移除open class
+                $(this).removeClass('open');
+            });
+        }
     </script>
     <!--用于引用该模板的HTML文件可以扩展script-->
     {% block script_extends %}

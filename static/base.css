@@ -7,6 +7,11 @@ body {
     padding-bottom: 4em;
 }
 
+/*设置导航栏北京颜色*/
+div.container-fluid{
+    background-color: #f5f6f7;
+}
+
 ul {
     list-style-type: none;
 }

@@ -60,8 +60,15 @@ def logout(request):
     # 获取到request请求头里面原本的网址信息，这样登录之后就跳回原来未登录前的页面
     referer = request.META.get('HTTP_REFERER', 'home')
     # zhang = re.split(r'/', referer)'user_info'
+    # 注销之后如果原来的页面是用户信息页面，这样的话就不能返回这个原来的页面，需要跳转到首页
     if re.match(r'.*user_info.*', referer):
-        return render(request, 'user/login_logout_error.html', {'message':'注销成功！返回首页', 'message1':'首页...', 'redirect_to':'/'})
+        return render(request, 'user/login_logout_error.html',
+                      {'message':'注销成功！返回首页', 'message1':'首页...', 'redirect_to':'/'})
+
+    # 注销之后如果原来的页面是用户博客页面，这样的话就不能返回这个原来的页面，需要跳转到首页
+    if re.match(r'.*user_blog.*', referer):
+        return render(request, 'user/login_logout_error.html',
+                      {'message': '注销成功！返回首页', 'message1': '首页...', 'redirect_to': '/'})
     return  render(request, 'user/login_logout_error.html', {'message': '注销成功！', 'message1':'原来的页面...', 'redirect_to':referer})
 
 
