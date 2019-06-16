@@ -2,10 +2,10 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import home
+from . import  views
 
 urlpatterns = [
-    path('', home, name='home'),  # 根目录，把之前的博客列表换成这个
+    path('', views.home, name='home'),  # 根目录，把之前的博客列表换成这个
     path('admin/', admin.site.urls),
     # 结合Django根目录的urls文件，整个访问网址是
     #  http://192.168.1.247:8000/blog/1
@@ -15,6 +15,8 @@ urlpatterns = [
     # path('likes/', include('likes.urls')),
     path('likes/', include('likes.urls')),
     path('user/', include('user.urls')),
+    path('notifications/', include('notifications.urls', namespace='notifications')),
+    path('my_notifications', views.my_notifications, name='my_notifications'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

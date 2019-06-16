@@ -33,9 +33,6 @@ def update_comment(request):
 
         comment.save()
 
-        # 评论完成，发送邮件通知
-        comment.send_email()
-
         data['pk'] = comment.pk
         # 这是一条评论的话
         if comment.root is None:
@@ -54,7 +51,8 @@ def update_comment(request):
         # 返回具体的错误信息
         data['message'] = list(comment_form.errors.values())[0][0]
     return JsonResponse(data)
-        # return render('login_logout_error.html', request, {'message': comment_form.errors, 'redirect_to': referer})
+
+    # return render('login_logout_error.html', request, {'message': comment_form.errors, 'redirect_to': referer})
     # # 返回原来的博客页面
     # referer = request.META.get('HTTP_REFERER', reverse('home'))
     #

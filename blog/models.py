@@ -40,6 +40,10 @@ class Blog(models.Model, ReadNumExpandMethod):
     #     except exceptions.ObjectDoesNotExist:
     #         return 0
 
+    # 返回博客作者的名称
+    def get_user(self):
+        return self.author
+
     def get_url(self):
         # 返回每一篇博客对应的链接
         return reverse('blog_detail', kwargs={'blog_pk':self.pk})
