@@ -19,3 +19,7 @@ ul {
 ul.navbar-right {
     margin-right: 0;
 }
+
+span.unread_count{
+    background-color: #d9534f!important;
+}

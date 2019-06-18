@@ -1,0 +1,12 @@
+li.read a{
+    color:#9d9d9d;
+}
+
+ul.notifications {
+    margin-top: 1em;
+}
+
+ul.notifications li{
+    margin-top: 0.5em;
+}
+

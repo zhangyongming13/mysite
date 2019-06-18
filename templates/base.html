@@ -1,5 +1,7 @@
 {% load staticfiles %}
 {% load blog_types %}
+<!--加载notifications的模板标签-->
+{% load notifications_tags %}
 <!doctype html>
 <html lang="zh-CN">
 <head>
@@ -17,6 +19,8 @@
     <script type="text/javascript" src="{% static 'bootstrap-3.3.7/js/bootstrap.min.js' %}"></script>
     {#    这里link标签引入相应的css静态文件#}
     <link rel="stylesheet" href="/static/base.css">
+    <!--实时获取未读数需要的js文件-->
+    <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
     <!--创建一个block快，名字叫title，用于其他模块调用的使用填充数据-->
     <title>{% block title %}{% endblock %}</title>
     {#这里会被填充#}
@@ -83,6 +87,8 @@
                         <li><a href="{% url 'login' %}?from={{ request.get_full_path }}">登录</a></li>
                         <li><a href="{% url 'register' %}?from={{ request.get_full_path }}">注册</a></li>
                     {% else %}
+                        <!--获取未读的消息-->
+                        {% notifications_unread as unread_count %}
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                 {% if user.has_nickname %}
@@ -90,11 +96,17 @@
                                 {% else %}
                                     {{ user.username }}
                                 {% endif %}
+                                <span class="badge unread_count live_notify_badge"></span>
                                 <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu">
                             <li><a href="{% url 'user_blog' %}">我的博客</a></li>
-                            <li><a href="{% url 'my_notifications' %}">我的消息</a></li>
+                            <li>
+                                <a href="{% url 'my_notifications' %}">
+                                我的消息
+                                    <span class="badge unread_count live_notify_badge"></span>
+                                </a>
+                            </li>
                             <li><a href="{% url 'user_info' %}">个人资料</a></li>
                             <li><a href="{% url 'admin:index' %}">后台管理</a></li>
 {#                            <li role="separator" class="divider"></li>分割线#}
@@ -172,7 +184,19 @@
                 $(this).removeClass('open');
             });
         }
+
+        //自定义实时获取未读消息
+        function my_special_notification_callback(data) {
+            unread_count = data['unread_count'];
+            if (unread_count == 0){
+                unread_count = '';
+            }
+            $('.live_notify_badge').text(unread_count);
+        }
     </script>
+
+    <!--实时更新消息的数量，嵌入notifications本来的代码，这样就会定时想后台查询未读数，返回data给JQuery函数进行处理-->
+    {% register_notify_callbacks callbacks='my_special_notification_callback' %}
     <!--用于引用该模板的HTML文件可以扩展script-->
     {% block script_extends %}
     {% endblock %}

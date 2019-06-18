@@ -57,8 +57,3 @@ def home(request):
     context['week_hot_blogs'] = week_hot_blogs
     context['month_hot_blogs'] = month_hot_blogs
     return render(request, 'home.html', context)
-
-
-def my_notifications(request):
-    context = {}
-    return render(request, 'my_notifications.html', context)

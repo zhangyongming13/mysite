@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{#另外一种引入css固态文件的方法#}
+{% load staticfiles %}
+{% block title %}
+    我的网站|我的消息
+{% endblock %}
+
+{% block header_extends %}
+    <link rel="stylesheet" href={% static 'my_notifications/my_notifications.css' %}>
+{% endblock %}
+
+{% block nav_home_active %}
+    active
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="col-md-10 col-md-offset-1">
+            <!--调用notification里面自带的mark_all_as_read进行将所有信息标记为处理-->
+            <a class="btn btn-primary" href="{% url 'notifications:mark_all_as_read' %}?next={% url 'my_notifications' %}">
+                全部标记为已读
+            </a>
+            <a class="btn btn-danger" href="{% url 'delete_my_read_notifications' %}">删除已读消息</a>
+            <ul class="notifications">
+                <!--取出用户的所有信息-->
+                {% for notification in request.user.notifications.all %}
+                    <li class="{% if not notification.unread %}read{% endif %}">
+                        [{{ notification.timesince }}之前]
+                        <!--本来应该是notification.data['url']但是前端页面不支持这个语法，但是使用notification.data.url就可以了-->
+                        <!--链接指向的式中间页面-->
+                        <a href="{% url 'my_notifications_middle' notification.pk %}">{{ notification.verb }}</a>
+                    </li>
+                {% empty %}
+                    <li>暂无消息</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

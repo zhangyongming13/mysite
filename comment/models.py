@@ -26,6 +26,10 @@ class Comment(models.Model):
     def get_user(self):
         return self.user
 
+    def get_url(self):
+        # 因为signal传进来的是评论，然后根据评论找到博客返回url就行了
+        return self.content_object.get_url()
+
     def __str__(self):
         return self.text
 

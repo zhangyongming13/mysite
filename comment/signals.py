@@ -28,8 +28,12 @@ def send_notifications(sender, instance, **kwargs):
         recipient = instance.reply_to
         verb = '{0} 回复了你 {1}'.format(
             instance.user.get_nickname_or_username(), strip_tags(instance.parent.text))
+
+    # url指的是这个instance对应评论或者回复（一种特殊一点的评论）对应的页面
+    # #content_ + str(instance.pk)方便用户转到页面之后定位到被回复或者评论的位置
+    url = instance.content_object.get_url() + '#content_' + str(instance.pk)
     # 发送通知，action_object记录这个通知是由上面触发的
-    notify.send(instance.user, recipient=recipient, verb=verb, action_object=instance)
+    notify.send(instance.user, recipient=recipient, verb=verb, action_object=instance, url=url)
 
 
 # 多线程发送邮箱验证码

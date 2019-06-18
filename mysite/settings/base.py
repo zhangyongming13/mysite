@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'likes',
     'user',
     'notifications',
+    'my_notifications',
 ]
 
 MIDDLEWARE = [
@@ -195,3 +196,5 @@ CKEDITOR_CONFIGS = {
         }
 }
 
+# 使得notifications发送通知的时候可以额外携带一些数据，比如url
+DJANGO_NOTIFICATIONS_CONFIG = { 'USE_JSONFIELD': True}
