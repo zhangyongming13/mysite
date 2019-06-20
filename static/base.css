@@ -4,7 +4,7 @@
 }
 body {
     margin-top: 60px;
-    padding-bottom: 4em;
+    /*padding-bottom: 2em;*/
 }
 
 /*设置导航栏北京颜色*/
@@ -22,4 +22,19 @@ ul.navbar-right {
 
 span.unread_count{
     background-color: #d9534f!important;
+}
+
+div.footer{
+    margin-top: 3em;
+    background-color: #eee;
+    color:#555;
+}
+
+div.website-info{
+    text-align: center;
+    padding: 1em;
+}
+
+div.website-info p{
+    margin-bottom: 0;
 }
