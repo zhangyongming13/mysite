@@ -165,7 +165,8 @@ CKEDITOR_CONFIGS = {
                     ['Styles', 'Format', 'Font', 'FontSize'],
                     ['TextColor', 'BGColor'],
                     ),
-        'extraPlugins': 'codesnippet',
+        'extraPlugins': ','.join(['codesnippet', 'prism', 'widget', 'lineutils']),
+        # 'extraPlugins': 'codesnippet',
     },
     # 创建博客的ckeditor的样式
     'create_blog': {
