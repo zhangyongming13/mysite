@@ -2,9 +2,18 @@
     margin: 0;
     padding: 0;
 }
-body {
-    margin-top: 60px;
+html, body {
+    margin-top: 35px;
+    height: 100%;
+    padding: 0;
     /*padding-bottom: 2em;*/
+}
+
+.page-container{
+    box-sizing: border-box;
+    min-height: 100%;
+    padding-bottom: 5em;
+    margin-bottom: 2em;
 }
 
 /*设置导航栏北京颜色*/
@@ -25,7 +34,8 @@ span.unread_count{
 }
 
 div.footer{
-    margin-top: 3em;
+    margin-top: -5em;
+    height: 5em;
     background-color: #eee;
     color:#555;
 }
