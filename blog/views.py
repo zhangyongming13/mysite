@@ -188,6 +188,6 @@ def user_blog(request):
         context = get_common_blog_data(request, user_blogs)
 
         username = request.user.username
-        context['page_of_blogs'] = user_blogs
+        # context['page_of_blogs'] = user_blogs
         context['user_name'] = username
         return render(request, 'blog/user_blog.html', context)
