@@ -44,7 +44,7 @@
                                         <span>点赞数：{% get_like_num blog %}</span>
                                         <span>不喜欢：{% get_dislike_num blog %}</span>
                                     </p>
-                                    <p>{{ blog.content | striptags | safe | truncatechars:120 }}</p>
+                                    <p>{{ blog.content | striptags | safe | truncatechars_html:120 }}</p>
                                 </div>
                             {% empty %}
                                 <div class="blog">

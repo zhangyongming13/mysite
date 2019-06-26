@@ -86,6 +86,18 @@
     {#                </li>#}
                     </ul>
                     <ul class="nav navbar-nav navbar-right">  <!--右边的用户操作-->
+                        <li>
+                            <!--设置action，设置form表单提交数据的路劲-->
+                            <form class="navbar-form search-form" action="{% url 'search_blog' %}">
+                                <div class="form-group">
+{#                                  name设置给后端传输数据的时候，数据的名称#}
+                                    <input type="text" name="search-word" class="form-control" placeholder="搜索博客">
+                                </div>
+                                <button type="submit" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-search"></span>
+                                </button>
+                              </form>
+                        </li>
     {#                    <!--判断用户是否登录，是由内容{% block content %}里面的user进行判断的-->#}
                         {% if not user.is_authenticated %}
                             <li><a href="{% url 'login' %}?from={{ request.get_full_path }}">登录</a></li>
@@ -118,6 +130,7 @@
                                 </ul>
                             </li>
                         {% endif %}
+                        <!--搜索框的实现-->
                     </ul>
                 </div>
             </div>

@@ -18,6 +18,7 @@ urlpatterns = [
     # 把notification添加到url中
     path('notifications/', include('notifications.urls', namespace='notifications')),
     path('my_notifications/', include('my_notifications.urls')),
+    path('search_blog/', views.search_blog, name='search_blog'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
