@@ -1,10 +1,43 @@
 {% extends 'blog/blog_list.html' %}
+{% load staticfiles %}
 {% block title %}
     {{ user_name }}的所有博客
+{% endblock %}
+{% block header_extends %}
+{#    进行头扩展，引入独立的css文件#}
+    <link rel="stylesheet" href="{% static 'user_blog.css' %}">
 {% endblock %}
 
 {% block blog_list_type %}
     <div>
         <h4>{{ user_name }}的所有博客如下： <a href="{% url 'blog_list' %}">查看全部的博客</a></h4>
     </div>
+{% endblock %}
+
+{% block editor_blog %}
+    <div class="editor_or_delete_blog">
+        <span class="glyphicon glyphicon-pencil">
+            <a href="{% url 'create_editor_blog' blog.pk %}">编辑博文</a>
+        </span>
+        <span class="glyphicon glyphicon-remove">
+            <!--点击事件是del，del返回true这样就是确认，false就是取消这次点击时间-->
+            <a id="delete_blog" href="{% url 'delete_blog' blog.pk %}" onclick="return del();">删除博客</a>
+        </span>
+    </div>
+{% endblock %}
+
+{% block script_extends %}
+    <script type="text/javascript">
+        // 删除确认框
+        function del() {
+            if (confirm('确认删除这篇博客？'))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    </script>
 {% endblock %}

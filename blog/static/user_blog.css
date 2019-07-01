@@ -1,0 +1,21 @@
+div.editor_or_delete_blog span{
+    margin-right: 1em;
+}
+
+div.editor_or_delete_blog span a{
+    margin-left: -1em;
+}
+
+div.blog:not(:last-child){
+    border-bottom: 1px solid #cccccc;
+}
+
+div.blog  {
+    margin-top: -2em;
+    margin-bottom: 1em;
+    padding: 1em;
+}
+
+div.paginator {
+    text-align: center;
+}

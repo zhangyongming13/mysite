@@ -45,6 +45,8 @@
                                         <span>不喜欢：{% get_dislike_num blog %}</span>
                                     </p>
                                     <p>{{ blog.content | striptags | safe | truncatechars_html:120 }}</p>
+                                    {% block editor_blog %}
+                                    {% endblock %}
                                 </div>
                             {% empty %}
                                 <div class="blog">

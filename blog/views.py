@@ -125,33 +125,112 @@ def Blog_detail(request, blog_pk):
     return response
 
 
+# 获取修改或者新增博客相同的数据
+def get_common_data_crete_editor_blog(request, blog_pk):
+    context ={}
+    context['error'] = ''
+    # 发表新博客的情况
+    if blog_pk == 0:
+        # 　方法为ｇｅｔ的时候就是需要新实例化有个表单，不然就是原来的
+        forms = CreateBlogForm()
+        context['page_title'] = '创建新的博客'
+        context['forms_title'] = '创建新的博客'
+        context['create_editor_flag'] = 0
+    else:
+        # 表示这是修改博客的情况
+        try:
+            blog = get_object_or_404(Blog, pk=blog_pk)
+            # 初始化form表单，获取要修改blog的数据
+            forms = CreateBlogForm(
+                initial={'title': blog.title, 'blog_type': blog.blog_type, 'text': blog.content})
+            context['page_title'] = '修改博客'
+            context['forms_title'] = '修改博客'
+            context['create_editor_flag'] = blog_pk
+
+            # 修改的博客和登录的用户对不上，拒绝修改博客
+            if request.user != blog.author:
+                context['error'] = '您没有权限修改该博客，'
+        except Exception as e:
+
+            # 要修改的博客找不到
+            forms = CreateBlogForm()
+            context['error'] = '没找到要修改的博客，'
+    context['create_blog_form'] = forms
+    context['submit_text'] = '提交'
+    return context
+
+
 # 创建博客
-def Create_blog(request):
+def create_editor_blog(request, blog_pk):
     original_url = request.GET.get('from', reverse('home'))
+    context = {}
     if request.method == 'POST':
 
         # 实例化这个表单，如果下面的验证出现问题的话，传给前端页面的这个forms就带有相关的错误信息了
-        forms = CreateBlogForm(request.POST, request=request)
+        forms = CreateBlogForm(request.POST, request=request, blog_pk=blog_pk)
         if forms.is_valid():
             title = forms.cleaned_data['title']
             blog_type = forms.cleaned_data['blog_type']
             text = forms.cleaned_data['text']
 
-            # 创建新的博客，使用create
-            blog = Blog.objects.create(title=title, blog_type=blog_type, content=text, author=request.user, )
-            now_blog_url = '/blog/' + str(blog.pk)  # 翻遍转到新的博客的详情页
-            return render(request, 'user/login_logout_error.html',{'message': '博客创建成功', 'message1': '新增的博客详情页', 'redirect_to': now_blog_url})
+            if blog_pk == 0:
+                # 创建新的博客，使用create
+                blog = Blog.objects.create(title=title, blog_type=blog_type, content=text, author=request.user, )
+                now_blog_url = '/blog/' + str(blog.pk)  # 翻遍转到新的博客的详情页
+                return render(request, 'user/login_logout_error.html',
+                              {'message': '博客创建成功，', 'message1': '新增的博客详情页', 'redirect_to': now_blog_url})
+            else:
+                try:
+                    # 根据blog_pk获取博客，然后进行修改
+                    blog = get_object_or_404(Blog, pk=blog_pk)
+                    now_blog_url = '/blog/' + str(blog.pk)
+                    if blog.author == request.user:
+                        blog.title = title
+                        blog.blog_type = blog_type
+                        blog.content = text
+                        blog.save()
+                        return render(request, 'user/login_logout_error.html',
+                                    {'message': '博客修改成功，', 'message1': '修改的博客详情页', 'redirect_to': now_blog_url})
+                    else:
+                        return render(request, 'user/login_logout_error.html',
+                                      {'message': '您没有权限修改该博客，', 'message1': '跳转到首页', 'redirect_to': '/'})
+                except Exception as e:
+                    return render(request, 'user/login_logout_error.html',
+                                  {'message': '没找到要修改的博客，', 'message1': '跳转到首页', 'redirect_to': '/'})
+        else:
+            # form表单验证不通过的时候，重新渲染页面
+            context = get_common_data_crete_editor_blog(request, blog_pk)
+            context['create_blog_form'] = forms
+    # 初始化发表或者修改页面
     else:
-        # 　方法为ｇｅｔ的时候就是需要新实例化有个表单，不然就是原来的
-        forms = CreateBlogForm()
-    context = {}
-    context['page_title'] = '创建新的博客'
-    context['forms_title'] = '创建新的博客'
-    context['submit_text'] = '提交'
+        context = get_common_data_crete_editor_blog(request, blog_pk)
+
+    # 判断修改的博客是否存在，或者要修改的博客作者和登录的人是否一致
+    if context['error'] != '':
+        return render(request, 'user/login_logout_error.html',
+                                  {'message': context['error'], 'message1': '跳转到首页', 'redirect_to': '/'})
     context['return_back'] = original_url
+
     # 这个表单有可能是上面is_valid不通过带有错误新的的form，也可能式新建的
-    context['create_blog_form'] = forms
-    return render(request, 'blog/create_blog.html',context)
+    return render(request, 'blog/create_blog.html', context)
+
+
+def delete_blog(request, blog_pk):
+    try:
+        blog = get_object_or_404(Blog, pk=blog_pk)
+
+        # 判断被删除博客的作者和当前登录用户是否一致
+        if blog.author == request.user:
+            blog.is_delete = True
+            blog.save()
+            return render(request, 'user/login_logout_error.html',
+                          {'message': '删除博客成功，', 'message1': '跳转到用户博客列表', 'redirect_to': '/blog/user_blog'})
+        else:
+            return render(request, 'user/login_logout_error.html',
+                          {'message': '非法删除请求，', 'message1': '跳转到首页', 'redirect_to': '/'})
+    except Exception as e:
+        return render(request, 'user/login_logout_error.html',
+                      {'message': '删除博客失败，', 'message1': '跳转到首页', 'redirect_to': '/'})
 
 
 # 实时检查博客标题是否被暂用的方法
@@ -181,7 +260,7 @@ def check_login_status(request):
 def user_blog(request):
     if request.user.is_authenticated:
         # 获取当前用户的所有博客
-        user_blogs = Blog.objects.filter(author=request.user.pk)
+        user_blogs = Blog.objects.filter(author=request.user.pk, is_delete=False)
 
         # 利用所有博客获取一些公共的数据比如博客的分类，日期分类等，之所以需要这些信息
         # 是因为继承的式blog_list.html的模板，所以需要这些信息

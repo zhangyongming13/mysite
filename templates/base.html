@@ -68,7 +68,7 @@
                     </li>
                     <li class="{% block nav_create_active %}
     {#                {% endblock %}"><a href="{% url 'check_login_status' %}?from={{ request.get_full_path }}">发表博客</a></li>#}
-                    {% endblock %}"><a href="{% url 'Create_blog' %}?from={{ request.get_full_path }}">发表博客</a></li>
+                    {% endblock %}"><a href="{% url 'create_editor_blog' 0 %}?from={{ request.get_full_path }}">发表博客</a></li>
     {#                <li class="{% block nav_blog_type_active %}#}
     {#                {% endblock %}">#}
     {#                    <li class="dropdown">#}

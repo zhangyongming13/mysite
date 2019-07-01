@@ -31,7 +31,7 @@
                         <h3 class="panel-title">{{ forms_title }}</h3>
                     </div>
                     <div class="panel-body">
-                        <form action="{% url 'Create_blog' %}" method="post">  <!--将数据传到login这个网页路径中-->
+                        <form action="{% url 'create_editor_blog' create_editor_flag %}" method="post">  <!--将数据传到login这个网页路径中-->
                             {% csrf_token %}  <!--csrf令牌，避免被拦截-->
                             <!--引入form表单login_form,利用for循环把login_form里面的数据单独拿出来-->
                             {% for field in create_blog_form %}
