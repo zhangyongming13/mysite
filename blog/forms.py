@@ -40,7 +40,7 @@ class CreateBlogForm(forms.Form):
                 raise forms.ValidationError('其他错误！')
         except Exception as e:
             # 新建博客检查标题是否重复
-            if Blog.objects.filter(title=title).exists():
+            if Blog.objects.filter(title=title, is_delete=False).exists():
                 raise forms.ValidationError('已存在该标题的博客，请换一个标题')
         return title
 

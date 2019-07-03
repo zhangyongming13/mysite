@@ -35,9 +35,9 @@ def get_common_blog_data(request, blogs_all_list):
 
     # 获取博客不同类型数量
     '''BlogType.objects.annotate(blog_count=Count('blog'))表示BlogType中的类型在
-    blog(BlogType和Blog有外键关联)Blog的小写的数量
+    blog(BlogType和Blog有外键关联)Blog的小写的数量,先使用filter过滤已经逻辑删除的博客
     '''
-    blog_type_count = BlogType.objects.annotate(blog_count=Count('blog'))
+    blog_type_count = BlogType.objects.filter(blog__is_delete=False).annotate(blog_count=Count('blog'))
     # blog_type = BlogType.objects.all()
     # blog_types_list = []
     # for i in blog_type:
@@ -49,7 +49,7 @@ def get_common_blog_data(request, blogs_all_list):
     blog_date_dict = {}
     # i为年和月组成的日期分类
     for i in blog_date:
-        blog_count = Blog.objects.filter(created_time__year=i.year, created_time__month=i.month).count()
+        blog_count = Blog.objects.filter(created_time__year=i.year, created_time__month=i.month, is_delete=False).count()
         # 利用字典保存该日期分类对应的数量，后面for循环取出的时候要添加items
         blog_date_dict[i] = blog_count
 
@@ -76,7 +76,7 @@ def Blog_with_type(request, blog_type_pk):
     # 根据传入的blog_type_pk获取对应的BlogType类型
     blog_type_name = get_object_or_404(BlogType, pk=blog_type_pk)
     # 根据BlogType类型获得相应类型的文章
-    blog_with_type_all = Blog.objects.filter(blog_type=blog_type_name)
+    blog_with_type_all = Blog.objects.filter(blog_type=blog_type_name, is_delete=False)
     context = get_common_blog_data(request, blog_with_type_all)
     context['blogs_type'] = blog_type_name
     context['blog_type_pk'] = blog_type_pk
@@ -85,7 +85,7 @@ def Blog_with_type(request, blog_type_pk):
 
 def blos_with_date(request, year, month):
     # 根据BlogType类型获得相应类型的文章
-    blog_with_date_all = Blog.objects.filter(created_time__year=year, created_time__month=month)
+    blog_with_date_all = Blog.objects.filter(created_time__year=year, created_time__month=month, is_delete=False)
     context = get_common_blog_data(request, blog_with_date_all)
     context['blog_with_date'] = '%s年%s月' % (year, month)
     return render(request, 'blog/blog_with_date.html', context)
@@ -108,8 +108,8 @@ def Blog_detail(request, blog_pk):
     # 调用计数模块里面的方法进行博客阅读数的增加
     read_statistics_add_times(request, blog_detail, blog_pk)
 
-    context['previous_blog'] = Blog.objects.filter(created_time__gt=blog_detail.created_time).last()
-    context['next_blog'] = Blog.objects.filter(created_time__lt=blog_detail.created_time).first()
+    context['previous_blog'] = Blog.objects.filter(created_time__gt=blog_detail.created_time, is_delete=False).last()
+    context['next_blog'] = Blog.objects.filter(created_time__lt=blog_detail.created_time, is_delete=False).first()
     context['blog_detail'] = blog_detail
     # context['login_form'] = LoginForm()
 
@@ -237,7 +237,7 @@ def delete_blog(request, blog_pk):
 def check_title_exists(request):
     data = {}
     title = request.GET.get('title')
-    if Blog.objects.filter(title=title).exists():
+    if Blog.objects.filter(title=title, is_delete=False).exists():
         data['status'] = 'ERROR'
         data['message'] = '已存在该标题的博客，请换个标题！'
     else:

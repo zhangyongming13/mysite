@@ -63,7 +63,7 @@ def get_today_or_yesterday_hot_blogs(content_type, day_flag):
     # 利用ContentType的反向api功能访问统计数据
     # values表示Blog需要传递出去的值
     # annotate表示对数据进行聚合
-    today_hot_blogs = Blog.objects.filter(read_details__date=today) \
+    today_hot_blogs = Blog.objects.filter(read_details__date=today, is_delete=False) \
                                   .values('id', 'title') \
                                   .annotate(read_num_sum=Sum('read_details__read_num')) \
                                   .order_by('-read_num_sum')[:4]
@@ -80,7 +80,7 @@ def get_week_or_month_hot_blogs(flag):
         date = today - datetime.timedelta(days=7)
     elif flag == 'month':
         date = today - datetime.timedelta(days=30)
-    blogs = Blog.objects.filter(read_details__date__lte=today, read_details__date__gt=date) \
+    blogs = Blog.objects.filter(read_details__date__lte=today, read_details__date__gt=date, is_delete=False) \
                         .values('id', 'title') \
                         .annotate(read_num_sum=Sum('read_details__read_num')) \
                         .order_by('-read_num_sum')[:4]

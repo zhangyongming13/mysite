@@ -86,7 +86,7 @@ def search_blog(request):
                 condition = condition | Q(title__icontains=word)
         # 这里的condition为(OR: ('title_icontains', '444'), ('title_icontains', '大'))
         # 相当于多个条件，中间使用的式or
-        search_blogs = Blog.objects.filter(condition)
+        search_blogs = Blog.objects.filter(condition, is_delete=False)
     else:
         search_blogs = []
 
