@@ -67,6 +67,17 @@
                     <p>下一篇：没有了</p>
                 {% endif %}
             </div>
+            <div>
+                {% if blog_detail.author == request.user %}
+                    <span class="glyphicon glyphicon-pencil">
+                        <a href="{% url 'create_editor_blog' blog_detail.pk %}?from={{ request.get_full_path }}">编辑博文</a>
+                    </span>
+                    <span class="glyphicon glyphicon-remove">
+                        <!--点击事件是del，del返回true这样就是确认，false就是取消这次点击时间-->
+                        <a id="delete_blog" href="{% url 'delete_blog' blog_detail.pk %}" onclick="return del();">删除博客</a>
+                    </span>
+                {% endif %}
+            </div>
         </div>
     </div>
     <div class="row">
@@ -167,6 +178,17 @@
 
 {% block script_extends %}
     <script type="text/javascript">
+        // 删除确认框
+        function del() {
+            if (confirm('确认删除这篇博客？'))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         // 替换前端数据中的{数字}，比如{0}+{1}+{0},a,b 就会替换成{a}+{b}+{a}
         String.prototype.format = function () {
             var str = this;  // 接收前端传进来的文件

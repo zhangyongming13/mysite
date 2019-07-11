@@ -17,7 +17,7 @@
 {% block editor_blog %}
     <div class="editor_or_delete_blog">
         <span class="glyphicon glyphicon-pencil">
-            <a href="{% url 'create_editor_blog' blog.pk %}">编辑博文</a>
+            <a href="{% url 'create_editor_blog' blog.pk %}?from={{ request.get_full_path }}">编辑博文</a>
         </span>
         <span class="glyphicon glyphicon-remove">
             <!--点击事件是del，del返回true这样就是确认，false就是取消这次点击时间-->
