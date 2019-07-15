@@ -53,7 +53,7 @@
     <div class="hot-date">
         <h3>一个月阅读热点</h3>
         <ul>
-            {% for hot_blogs in week_hot_blogs %}
+            {% for hot_blogs in month_hot_blogs %}
                 <li><a href="{% url "blog_detail" hot_blogs.id %}">{{ hot_blogs.title }}</a>({{ hot_blogs.read_num_sum }})</li>
             {% empty %}
                 <li>一个月暂无热门博客</li>
