@@ -6,9 +6,8 @@
 {% endblock %}
 
 {% block blog_list_type %}
-    <div>
-        <h4>类型为:{{ blogs_type }}的博文如下： <a href="{% url 'blog_list' %}">查看全部的博客</a></h4>
-    </div>
+    <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+    <a href="{% url 'blog_with_type' blogs_type.pk %}">{{ blogs_type }}</a>
 {% endblock %}
 
 {#{% block content %}#}

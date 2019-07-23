@@ -23,3 +23,6 @@ div.paginator {
 p.blog-info span {
     margin-right: 1em;
 }
+div.panel-heading {
+    padding-left: 29px;
+}

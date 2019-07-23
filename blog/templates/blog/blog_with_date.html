@@ -6,7 +6,6 @@
 {% endblock %}
 
 {% block blog_list_type %}
-    <div>
-        <h4>日期为:{{ blog_with_date }}的博文如下： <a href="{% url 'blog_list' %}">查看全部的博客</a></h4>
-    </div>
+    <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+    <a href="{% url 'blog_with_date' blog_year blog_month %}">{{ blog_with_date }}</a>
 {% endblock %}

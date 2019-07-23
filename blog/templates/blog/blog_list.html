@@ -25,8 +25,11 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <!--blog | length计算出可迭代对象长度，即个数-->
-                        {% block blog_list_type %} <!--用于其他html嵌套该模板-->
-                        {% endblock %}
+                        <h4>
+                            <a href="{% url 'blog_list' %}">全部博客</a>
+                            {% block blog_list_type %} <!--用于其他html嵌套该模板-->
+                            {% endblock %}
+                        </h4>
                     </div>
                     <div class="panel-body">
                         {#让每个li列表前面没有小黑点#}
@@ -129,7 +132,7 @@
 {#                            # for循环的是一个dict字典，因为要把字典的key和value都取出来，所以要加items#}
                             {% for blog_date, blog_date_count in blog_date.items %}
                                 <li>
-                                    <a href="{% url 'blos_with_date' blog_date.year blog_date.month %}">
+                                    <a href="{% url 'blog_with_date' blog_date.year blog_date.month %}">
                                         {{ blog_date | date:'Y年m月' }}({{ blog_date_count }})
                                     </a>
                                 </li>

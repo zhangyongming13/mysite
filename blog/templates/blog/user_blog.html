@@ -9,9 +9,8 @@
 {% endblock %}
 
 {% block blog_list_type %}
-    <div>
-        <h4>{{ user_name }}的所有博客如下： <a href="{% url 'blog_list' %}">查看全部的博客</a></h4>
-    </div>
+    <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+    <a href="{% url 'user_blog' %}">{{ user_name }}的所有博客：</a>
 {% endblock %}
 
 {% block editor_blog %}

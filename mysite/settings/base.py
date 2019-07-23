@@ -118,7 +118,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # 配置ckeditor
 CKEDITOR_UPLOAD_PATH = 'upload'
 
-EACH_PAGE_BLOG_NUMBER = 7
+EACH_PAGE_BLOG_NUMBER = 10
 
 # 设置数据库缓存
 CACHES = {

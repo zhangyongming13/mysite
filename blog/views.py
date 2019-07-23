@@ -83,11 +83,13 @@ def Blog_with_type(request, blog_type_pk):
     return render(request, 'blog/blog_with_type.html', context)
 
 
-def blos_with_date(request, year, month):
+def blog_with_date(request, year, month):
     # 根据BlogType类型获得相应类型的文章
     blog_with_date_all = Blog.objects.filter(created_time__year=year, created_time__month=month, is_delete=False)
     context = get_common_blog_data(request, blog_with_date_all)
     context['blog_with_date'] = '%s年%s月' % (year, month)
+    context['blog_year'] = year
+    context['blog_month'] = month
     return render(request, 'blog/blog_with_date.html', context)
 
 
