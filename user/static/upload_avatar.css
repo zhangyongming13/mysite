@@ -1,0 +1,29 @@
+/*头像编辑*/
+.avatar-wrapper {
+  height: 370px;
+  width: 100%;
+  margin-top: 15px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,.25);
+  background-color: #fcfcfc;
+  overflow: hidden;
+}
+
+.avatar-wrapper img { display: block; height: auto; max-width: 100%;}
+
+/*头像预览*/
+.avatar-preview {
+  margin-top: 15px;
+  margin-right: 15px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background-color: #fff;
+  overflow: hidden;
+  height: 96px;
+  width: 96px;
+}
+
+.avatar-preview:hover { border-color: #ccf; box-shadow: 0 0 5px rgba(0,0,0,.15);}
+
+div.avatar-btns{
+  margin-top: 0.5em;
+}

@@ -43,6 +43,7 @@ def update_comment(request):
         data['status'] = 'SUCCESS'
         data['content_type'] = ContentType.objects.get_for_model(comment).model
         data['username'] = comment.user.get_nickname_or_username()
+        data['avatar_url'] = comment.user.get_avatar_url()
         data['comment_time'] = timezone.localtime(comment.comment_time).strftime('%Y-%m-%d %H:%M:%S')
         data['text'] = comment.text
         # return render(request, 'login_logout_error.html', {'message': '评论成功！', 'redirect_to': referer})

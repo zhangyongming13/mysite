@@ -56,3 +56,13 @@ div.website-info p{
     margin-left: -3em;
     color: #aaa;
 }
+
+
+img.navbar-avatar{
+    max-width: none;
+    width: 30px;
+    height: 30px;
+    margin-top: -7px;
+    margin-right: 4px;
+    /*border-radius: 4px;*/
+}

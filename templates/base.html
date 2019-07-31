@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="{% static '/bootstrap-3.3.7/css/bootstrap.min.css' %}">
     {#    引用Jquery文件#}
     <script type="text/javascript" src="{% static '/jquery_1.12.4.min.js' %}"></script>
+    <script type="text/javascript" src="{% static '/jquery.cookie.js' %}"></script>
     {#    引入bootstrap的js库#}
     <script type="text/javascript" src="{% static 'bootstrap-3.3.7/js/bootstrap.min.js' %}"></script>
     {#    这里link标签引入相应的css静态文件#}
@@ -106,8 +107,9 @@
                         {% else %}
                             <!--获取未读的消息-->
                             {% notifications_unread as unread_count %}
-                            <li class="dropdown">
+                            <li class="dropdown user-info">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <img src="{{ user.get_avatar_url }}" class="img-circle navbar-avatar" alt="Cinque Terre">
                                     {% if user.has_nickname %}
                                         {{ user.username }}({{ user.get_nickname }})
                                     {% else %}

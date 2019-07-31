@@ -120,10 +120,13 @@
                     {% get_comment blog_detail as comments %}
                     {% for comment in comments %}
                     <div id="root_{{ comment.pk }}" class="comment-text">
+                        <span>
+                            <img src="{{ comment.user.get_avatar_url }}" class="img-circle navbar-avatar" alt="Cinque Terre">
+                        </span>
                         <span>{{ comment.user.get_nickname_or_username }}</span>
                         <span>({{ comment.comment_time | date:"Y-m-d H:i:s"}}):</span>
                         <!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
-                        <div id="content_{{ comment.pk }}">
+                        <div id="content_{{ comment.pk }}" class="comment-specific-text">
                             {{ comment.text | safe}}
                         </div>
                         <!--触发点赞或者取消点赞事件,把this(整个div块都传给ajax的这个function)-->
@@ -143,12 +146,15 @@
                         <!--通过root_comment反向获取该条评论的所有回复-->
                         {% for reply in comment.root_comment.all %}
                             <div class="reply">
+                                <span>
+                                    <img src="{{ reply.user.get_avatar_url }}" class="img-circle navbar-avatar" alt="Cinque Terre">
+                                </span>
                                 <span>{{ reply.user.get_nickname_or_username }}</span>
                                 <span>({{ reply.comment_time | date:"Y-m-d H:i:s" }})</span>
                                 <span>回复</span>
                                 <span>{{ reply.reply_to.get_nickname_or_username }}:</span>
                                 <!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
-                                <div id="content_{{ reply.pk }}">
+                                <div id="content_{{ reply.pk }}" class="reply-specific-text">
                                     {{ reply.text | safe}}
                                 </div>
                                 <div class="like" onclick="likeChange(this, '{% get_content_type reply %}', {{ reply.pk }})">
@@ -245,10 +251,13 @@
                             {#    '</div>' +#}
                             {#    '<a href="javascript:reply(' + data['pk'] + ');">回复</a>' + '</div>';#}
                             var comment_html = '<div id="root_{0}" class="comment-text">' +
+                                                '<span>\n' +
+                                                    '<img src="{5}" class="img-circle navbar-avatar" alt="Cinque Terre">\n' +
+                                                '</span>' +
                                                 '<span>{1}</span>' +
                                                 '<span>({2}):</span>' +
                                                 //<!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
-                                                '<div id="content_{0}">' +
+                                                '<div id="content_{0}" class="comment-specific-text">' +
                                                     '{3}' +
                                                 '</div>' +
                                                 //<!--触发点赞或者取消点赞事件,把this(整个div块都传给ajax的这个function)-->
@@ -268,7 +277,7 @@
                                                 '<a href="javascript:reply({0});">回复</a>' +
                                                 '</div>';
                             //使用format批量替换数据format({0}, {1}, {2}, {3}, {4})
-                            comment_html = comment_html.format(data['pk'], data['username'], data['comment_time'], data['text'], data['content_type']);
+                            comment_html = comment_html.format(data['pk'], data['username'], data['comment_time'], data['text'], data['content_type'], data['avatar_url']);
                             // 在id为coment_list的元素中插入上面构造的html代码
                             $("#comment_list").prepend(comment_html);  //在comment_list元素的开头插入构造的html文件
                             $("#comment_error_or_success").text('评论成功！');
@@ -284,12 +293,15 @@
                             {#    '</div>' +#}
                             {#    '<a href="javascript:reply(' + data['pk'] + ');">回复</a>' + '</div>';#}
                             var reply_html = '<div class="reply">' +
+                                                '<span>\n' +
+                '                                    <img src="{6}" class="img-circle navbar-avatar" alt="Cinque Terre">\n' +
+                '                                </span>' +
                                                 '<span>{0}</span>' +
-                                                '<span>({1})</span>' +
-                                                '<span>回复</span>' +
+                                                '<span> ({1}) </span>' +
+                                                '<span>回复 </span>' +
                                                 '<span>{2}:</span>' +
                                                 //<!--在回复的时候，需要显示被回复的内容是什么，所以要取到该值-->
-                                                '<div id="content_{3}">' +
+                                                '<div id="content_{3}" class="reply-specific-text">' +
                                                     '{4}' +
                                                 '</div>' +
                                                 '<div class="like" onclick="likeChange(this, \'{5}\', {3})">' +
@@ -305,7 +317,7 @@
                                                 //<!--添加回复按钮，调用javascript方法-->
                                                 '<a href="javascript:reply({3});">回复</a>' +
                                             '</div>';
-                            reply_html = reply_html.format(data['username'], data['comment_time'], data['reply_to'], data['pk'], data['text'], data['content_type']);
+                            reply_html = reply_html.format(data['username'], data['comment_time'], data['reply_to'], data['pk'], data['text'], data['content_type'], data['avatar_url']);
                             $("#root_" + data['root_pk']).append(reply_html);
                             $("#comment_error_or_success").text('回复成功！');
                         }

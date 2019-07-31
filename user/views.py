@@ -6,10 +6,10 @@ from django.http import JsonResponse
 from .models import Profile
 from django.core.mail import send_mail
 from django.conf import settings
-import re
-import string
-import random
-import time
+from PIL import Image
+from django.template import RequestContext
+from django.shortcuts import render_to_response
+import re, string, random, time, os, uuid
 
 
 def login_for_medal(request):
@@ -288,3 +288,74 @@ def check_email_user(request):
         data['status'] = 'ERROR'
         data['message'] = '该邮箱不存在对应的用户，请检查邮箱或者直接注册！'
     return JsonResponse(data)
+
+
+# 装饰器，登录判断
+def check_login(func):
+    def wrapper(request):
+        # 登录判断
+        if not request.user.is_authenticated:
+            return render(request, 'user/login_logout_error.html',
+                          {'message': '尚未登录', 'message1': '首页', 'redirect_to': '/'})
+        else:
+            return func(request)
+
+    return wrapper
+
+
+# 上传头像的页面
+@check_login
+def upload_avatar(request):
+    """修改头像页面"""
+    context = {}
+    context['user'] = request.user
+    return render(request, 'user/upload_avatar.html', context)
+
+
+# 上传头像，并进行裁剪等操作
+@check_login
+def user_avatar_upload(request):
+
+    # 获取图片的数据
+    avatar_file = request.FILES['avatar_file']
+    if not os.path.isdir(settings.AVATAR_ROOT):
+        os.mkdir(settings.AVATAR_ROOT)
+
+    # 临时保存文件的路径以及文件名
+    # temp_filename = uuid.uuid1().hex + os.path.splitext(avatar_file.name)[-1]
+    temp_filename = request.user.username + '-' +  uuid.uuid1().hex + '.png'
+    file_path = os.path.join(settings.AVATAR_ROOT, temp_filename)
+
+    # 使用chunks的方法而不是read的方法，避免在文件较大的时候，使用read()一次性将
+    # 文件读到内存中耗费时间以及占用内存空间，chunks一块一块的读取，每一块的大小默认是2.5M
+    with open(file_path, 'wb') as f:
+        for chunk in avatar_file.chunks():
+            f.write(chunk)
+
+    # 获取裁剪的数据
+    top = int(float(request.POST['avatar_y']))
+    buttom = top + int(float(request.POST['avatar_height']))
+    left = int(float(request.POST['avatar_x']))
+    right = left + int(float(request.POST['avatar_width']))
+
+    # 图片处理，裁剪，补充背景，保存
+    im = Image.open(file_path)
+    crop_im = im.convert("RGBA").crop((left, top, right, buttom)).resize((64, 64), Image.ANTIALIAS)
+    out = Image.new("RGBA", crop_im.size, (255, 255, 255))
+    out.paste(crop_im, (0,0,64,64), crop_im)
+    out.save(file_path)
+
+    data = {}
+    # models字段保存记录：
+    try:
+        user_profile = Profile.objects.get(user=request.user)
+        user_profile.avatar = '/' + file_path
+        user_profile.save()
+        data['success'] = True
+        data['message'] = '更换头像成功！'
+        data['avatar_url'] = file_path
+        return JsonResponse(data)
+    except Exception as e:
+        data['success'] = False
+        data['message'] = '更换头像失败，请重试！'
+        return JsonResponse(data)

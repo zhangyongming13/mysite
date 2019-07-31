@@ -13,24 +13,37 @@
     active
 {% endblock %}
 
+{% block header_extends %}
+    <link rel="stylesheet" href="{% static 'user_info.css' %}">
+{% endblock %}
+
 {% block content %}
     <div class="container">
         <div class="row">
             <!--利用bootstrap里面的方法珊格系统，设置左边右边歌4个珊格，这样就可以居中-->
-            <div class="col-xs-10 col-sm-7 col-xs-offset-1 col-sm-offset-3 col-md-4 col-md-offset-4">
-                {% if user.is_authenticated %}
-                    <h2>{{ user.username }}</h2>
-                    <ul>
-                        <li>昵称：{{ user.get_nickname }} <a href="{% url 'change_nickname' %}?from={{ request.get_full_path }}">修改昵称</a></li>
-                        <li>邮箱：{% if user.email %}
-                            {{ user.email }} <a href="{% url 'bind_email' %}?from={{ request.get_full_path }}">修改邮箱</a>
-                        {% else %}
-                            未绑定 <a href="{% url 'bind_email' %}?from={{ request.get_full_path }}">绑定邮箱</a>
-                        {% endif %}</li>
-                        <li>上一次登录时间：{{ user.last_login | date:"Y-m-d H:i:s" }}</li>
-                        <li><a href="{% url 'change_user_password' %}?from={{ request.get_full_path }}">修改密码</a></li>
-                    </ul>
-                {% endif %}
+            <div class="col-md-10 col-md-offset-1">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading user-info-heading">
+                            <h3>{{ user.username }}的个人信息：</h3>
+                        </div>
+                        <div class="panel-body user-info-body">
+                            {% if user.is_authenticated %}
+                                <ul>
+                                    <li>昵称：{{ user.get_nickname }} <a href="{% url 'change_nickname' %}?from={{ request.get_full_path }}">修改昵称</a></li>
+                                    <li>邮箱：{% if user.email %}
+                                        {{ user.email }} <a href="{% url 'bind_email' %}?from={{ request.get_full_path }}">修改邮箱</a>
+                                    {% else %}
+                                        未绑定 <a href="{% url 'bind_email' %}?from={{ request.get_full_path }}">绑定邮箱</a>
+                                    {% endif %}</li>
+                                    <li><img src="{{ user.get_avatar_url }}" class="img-circle navbar-avatar" alt="Cinque Terre"><a href="{% url 'upload_avatar' %}">修改头像</a></li>
+                                    <li>上一次登录时间：{{ user.last_login | date:"Y-m-d H:i:s" }}</li>
+                                    <li><a href="{% url 'change_user_password' %}?from={{ request.get_full_path }}">修改密码</a></li>
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

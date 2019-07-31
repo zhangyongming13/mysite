@@ -200,3 +200,9 @@ CKEDITOR_CONFIGS = {
 
 # 使得notifications发送通知的时候可以额外携带一些数据，比如url
 DJANGO_NOTIFICATIONS_CONFIG = { 'USE_JSONFIELD': True}
+
+# 设置头像目录
+AVATAR_ROOT = 'media/avatar'
+# AVATAR_ROOT_DEFAULT = 'media/avatar/default.png'
+AVATAR_ROOT_DEFAULT = os.path.join(BASE_DIR, '/media/avatar/default.png')
+# AVATAR_ROOT_DEFAULT_ABSOLUTE = os.path.join(BASE_DIR, 'media/avatar/default.png')

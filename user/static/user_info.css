@@ -1,0 +1,15 @@
+div.user-info-heading h3{
+    margin-top: 10px;
+}
+
+div.user-info-body{
+    margin-top: 0;
+}
+
+div.user-info-body ul{
+    margin-bottom: 0;
+}
+
+div.user-info-body ul li{
+    padding-top: 1.5em;
+}

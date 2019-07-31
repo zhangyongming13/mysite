@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{#另外一种引入css固态文件的方法#}
+{% load staticfiles %}
+
+{#加载这个自定义模板标签#}
+{% load user_tag %}
+
+{% block nav_home_active %}
+    active
+{% endblock %}
+
+{% block header_extends %}
+    <link rel="stylesheet" href="{% static 'upload_avatar.css' %}">
+    <link rel="stylesheet" type="text/css" href="/static/cropper/dist/cropper.min.css">
+    <script src="/static/cropper/dist/cropper.min.js"></script>
+{% endblock %}
+
+{% block title %}
+    我的网站|上传用户头像
+{% endblock %}
+
+{% block content %}
+    <div class="row avatar_crop">
+        <div class="col-sm-10">
+            <form id="avatar_form">
+                {%csrf_token%}
+                <!--编辑区域-->
+                <div class="avatar-wrapper" id='avatar-wrapper'>
+                    <img src="">
+                </div>
+                <!--编辑相关数据-->
+                <div>
+                    <input type="hidden" id="avatar_x" name="avatar_x">
+                    <input type="hidden" id="avatar_y" name="avatar_y">
+                    <input type="hidden" id="avatar_width" name="avatar_width">
+                    <input type="hidden" id="avatar_height" name="avatar_height">
+                </div>
+
+                <div class="avatar-btns">
+                    <div class="btn-group">
+                        <label class="btn btn-primary" for="avatar-input">本地图片</label>
+                        <input style="display:none" type="file" class="avatar-input" id="avatar-input" name="avatar_file" accept=".jpg,.jpeg,.png">
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary disabled" id="zoom-in" title="放大">
+                            <span class="glyphicon glyphicon-zoom-in"></span>
+                        </button>
+                        <button type="button" class="btn btn-primary disabled" id="zoom-out" title="缩小">
+                            <span class="glyphicon glyphicon-zoom-out"></span>
+                        </button>
+                        <button type="button" class="btn btn-primary disabled" id="reset" title="复位">
+                            <span class="glyphicon glyphicon-refresh"></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-2">
+            <!--头像预览-->
+            <div class="avatar-preview"><img style="width: 96px; height: 96px;" src="{{user.get_avatar_url}}"></div>
+            <button id="avatar-upload" class="btn btn-primary disabled">上传头像</button>
+{#            <a id="avatar-upload" href="#" class="btn btn-primary disabled">上传头像</a>#}
+        </div>
+    </div>
+{% endblock %}
+
+{% block script_extends %}
+    <script type="text/javascript">
+        $(function(){
+            //初始化裁剪器
+            var image = $('#avatar-wrapper img');
+            image.cropper({
+                checkImageOrigin: true, //检查图片来源
+                dragMode: 'move',   //图片可移动
+                restore:false,      //窗体调整大小之后不自动恢复裁剪区域
+                zoomOnWheel: false, //不允许通过鼠标滚轮缩放
+                zoomOnTouch: false, //不允许通过触摸缩放
+                aspectRatio: 1 / 1, //裁剪比例
+                autoCropArea: 0.5,  //裁剪背景透明度
+                autoCropArea: 1,    //自动裁剪的比例
+                preview: $(".avatar-preview").selector, //文本的jQuery选择表达式，一个div
+                crop: function (e) {
+                    $('#avatar_x').val(e.detail.x);
+                    $('#avatar_y').val(e.detail.y);
+                    $('#avatar_width').val(e.detail.width);
+                    $('#avatar_height').val(e.detail.height);
+                },
+            });
+
+            //选择图片
+            function choose_local_img(){
+                var URL = window.URL || window.webkitURL;
+                if(URL){
+                    var files = this.files;
+                    if (files && files.length){
+                        var file = files[0];
+                        if (/^image\/\w+$/.test(file.type)) {
+                            var blobURL = URL.createObjectURL(file);
+                            image.cropper('reset').cropper('replace', blobURL);
+                            $('.avatar_crop .disabled').removeClass('disabled');
+                        } else {
+                          alter('请选择一张图片！');
+                        }
+                    }
+                }
+            }
+            $("#avatar-input").bind('change', choose_local_img); //绑定事件
+
+            //缩放按钮
+            var zoom = 1;
+            $("#zoom-in").click(function(){
+                if(zoom<1.5){
+                    zoom += 0.1;
+                    image.cropper("zoom", 0.1);
+                }
+            });
+            $("#zoom-out").click(function(){
+                if(zoom>0.5){
+                    zoom -= 0.1;
+                    image.cropper("zoom", -0.1);
+                }
+            });
+
+            //复位按钮
+            $('#reset').click(function(){
+                image.cropper("reset");
+                zoom = 1;
+            });
+
+            //csrf处理
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        var csrftoken = $.cookie('csrftoken');
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+
+            //上传头像
+            $("#avatar-upload").click(function(){
+                if($('#avatar-wrapper img').attr('src')==''){
+                    alert('未选择图片！');
+                    return false;
+                }
+
+                var formData = new FormData($("#avatar_form")[0]);
+                $.ajax({
+                    url: "{% url 'user_avatar_upload' %}",
+                    type: 'POST',
+                    data: formData,
+                    async: false,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (data){
+                        if(data['success']){
+                            $('.navbar-avatar').attr('src', '/' + data['avatar_url']); //更新头像
+                        }else{
+                            alter('更换头像失败，请重试！');
+                        }
+                        alert(data['message']);
+                    },
+                    error: function (err) {
+                        alert('更换头像失败，请重试！')
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+{% endblock %}

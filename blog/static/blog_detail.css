@@ -34,10 +34,13 @@ div.comment-text{
     border-bottom:1px dashed #cccccc;
     margin-bottom: 0.5em;
     padding-bottom: 0.5em;
+    margin-top: 1.5em;
 }
 
 div.reply{
     margin-left:2em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 div#reply_content_container{
@@ -77,4 +80,13 @@ div.dislike{
 
 div.dislike .active{
     color: #f22;
+}
+
+div.comment-specific-text p{
+    margin-top: 10px;
+}
+
+div.reply-specific-text p{
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
