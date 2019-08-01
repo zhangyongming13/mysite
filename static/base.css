@@ -16,7 +16,7 @@ html, body {
     margin-bottom: 2em;
 }
 
-/*设置导航栏北京颜色*/
+/*设置导航栏背景颜色*/
 div.container-fluid{
     background-color: #f5f6f7;
 }
@@ -25,9 +25,21 @@ ul {
     list-style-type: none;
 }
 
+div.container-fluid{
+    height: 50px;
+}
+
 ul.navbar-right {
     margin-right: 0;
 }
+
+li.user-info a{
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+/*a.dropdown-toggle{*/
+    /*height: 53px;*/
+/*}*/
 
 span.unread_count{
     background-color: #d9534f!important;
@@ -62,7 +74,7 @@ img.navbar-avatar{
     max-width: none;
     width: 30px;
     height: 30px;
-    margin-top: -7px;
-    margin-right: 4px;
+    /*margin-top: -7px;*/
+    /*margin-right: 4px;*/
     /*border-radius: 4px;*/
 }
