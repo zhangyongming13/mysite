@@ -94,7 +94,7 @@ div.reply-specific-text p{
 button.toTop-arrow{
     position: fixed;
     z-index: 99;
-    right: 120px;
+    right: 2em;
     top:460px;
     bottom: 50px;
     width: 3.5rem;
@@ -107,7 +107,7 @@ button.toTop-arrow{
 button.to-bottom{
     position: fixed;
     z-index: 99;
-    right: 120px;
+    right: 2em;
     top:500px;
     bottom: 0;
     width: 3.5rem;
