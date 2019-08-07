@@ -90,3 +90,49 @@ div.reply-specific-text p{
     margin-top: 5px;
     margin-bottom: 5px;
 }
+
+button.toTop-arrow{
+    position: fixed;
+    z-index: 99;
+    right: 120px;
+    top:460px;
+    bottom: 50px;
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+button.to-bottom{
+    position: fixed;
+    z-index: 99;
+    right: 120px;
+    top:500px;
+    bottom: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+div.to-top-bottom button::before {
+    transform: rotate(-45deg) translate(0, -50%);
+    left: 0.4rem;
+}
+
+div.to-top-bottom button::after {
+    transform: rotate(45deg) translate(0, -50%);
+    right: 0.4rem;
+}
+
+/* 取消点击按钮时的聚焦 */
+div.to-top-bottom button:focus {
+    outline: none;
+}
+
+/* 消除代码块和子之间的空格 */
+div.contend p{
+    margin-bottom: 0;
+}

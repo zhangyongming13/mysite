@@ -44,6 +44,10 @@
             <div class="contend">
                 <p>{{ blog_detail.content | safe }}</p>
             </div>
+            <div class="to-top-bottom">
+                <button id="BackTop" class="toTop-arrow glyphicon glyphicon-chevron-up"></button>
+                <button id="BackBottom" class="to-bottom glyphicon glyphicon-chevron-down "></button>
+            </div>
             <!--触发点赞或者取消点赞事件,把this(整个div块都传给ajax的这个function)-->
             <div class="like" onclick="likeChange(this, '{% get_content_type blog_detail %}', {{ blog_detail.pk }})">
                 <span class="glyphicon glyphicon-thumbs-up {% get_like_status blog_detail request.user %}"></span>
@@ -439,18 +443,20 @@
         if (window.location.hash) {
             $('html').animate({scrollTop: $(window.location.hash).offset().top - 60}, 600);
         }
+
+        //返回顶部
+        $(function () {
+            $('#BackTop').click(function () {
+                $('html,body').animate({scrollTop: 0}, 500);
+            });
+        });
+        //返回底部
+        $(function () {
+            var h = $(document).height() - $(window).height();
+            $('#BackBottom').click(function () {
+            $('html,body').animate({scrollTop: h}, 500);
+            });
+        })
     </script>
 {% endblock %}
 
-{#{% block content %}#}
-{#    <h2>{{ blog_detail.title }}</h2>#}
-{#    <p>作者是：{{ blog_detail.author }}</p>#}
-{#    <p>创作时间：{{ blog_detail.created_time | date:'Y-m-d H:n:s' }}</p>#}
-{#    <p>博客类型是：#}
-{#        {{ blog_detail.blog_type.pk }}#}
-{#        <!--blog_detail.blog_type.pk为传进urls.py的数据-->#}
-{#        <a href="{% url 'blog_with_type' blog_detail.blog_type.pk %}">{{ blog_detail.blog_type }}</a>#}
-{#    </p>#}
-{#    <p>{{ blog_detail.content }}</p>#}
-{#    <!--a标签内的href的home式urls文件中对应路径的name名字-->#}
-{#{% endblock %}#}
