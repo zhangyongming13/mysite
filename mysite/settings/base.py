@@ -181,7 +181,7 @@ CKEDITOR_CONFIGS = {
                         ['Bold', 'Italic', 'Underline', 'Strike', '-'],
                         ['NumberedList', 'BulletedList',],
                         ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
-                        ['Smiley'],
+                        ['Image', 'Smiley'],
                         ['Styles', 'Format', 'Font', 'FontSize'],
                         ['TextColor', 'BGColor'],
                         ["CodeSnippet"],

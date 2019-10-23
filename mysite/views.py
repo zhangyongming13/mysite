@@ -88,7 +88,11 @@ def search_blog(request):
         # 相当于多个条件，中间使用的式or
         search_blogs = Blog.objects.filter(condition, is_delete=False)
     else:
-        search_blogs = []
+        # 搜索的关键字为空，直接展示所有博客
+        # 使用过滤器过滤掉标记为删除的博客，传入的是一个可迭代的对象
+        blogs_all_list = Blog.objects.filter(is_delete=False)
+        context = get_common_blog_data(request, blogs_all_list)
+        return render(request, "blog/blog_list.html", context)
 
     # 利用前面blog_list进行搜索结果的显示
     context = get_common_blog_data(request, search_blogs)

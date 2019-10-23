@@ -94,6 +94,20 @@
             })
         };
 
+        //csrf处理
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    var csrftoken = $.cookie('csrftoken');
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
         // 实时检查标题输入框是否输入，并且输入的标题是否已经被占用
         $(function () {
             // 判断是不是修改博客，如果是的话就不对博客标题重复性进行检查

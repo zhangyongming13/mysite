@@ -11,6 +11,7 @@ from user.forms import LoginForm
 from django.contrib.contenttypes.models import ContentType
 from comment.models import Comment
 from comment.forms import CommentForm
+from django.views.decorators.csrf import csrf_exempt
 
 
 def get_common_blog_data(request, blogs_all_list):
