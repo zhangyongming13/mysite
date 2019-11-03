@@ -11,6 +11,7 @@
     <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
     <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
     <script src="{% static 'prism/lib/prism/prism_patched.min.js'  %}" type="text/javascript"></script>
+
 {#    <link rel="stylesheet"#}
 {#      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css">#}
 {#    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>#}
@@ -47,6 +48,26 @@
             <div class="to-top-bottom">
                 <button id="BackTop" class="toTop-arrow glyphicon glyphicon-chevron-up"></button>
                 <button id="BackBottom" class="to-bottom glyphicon glyphicon-chevron-down "></button>
+            </div>
+            <div class="my-live-2d">
+                <div class="waifu">
+{#                <div class="waifu-tips"></div>#}
+                <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+                <div class="waifu-tool">
+                    <span class="fui-home"></span>
+                    <span class="fui-chat"></span>
+                    <span class="fui-eye"></span>
+                    <span class="fui-user"></span>
+                    <span class="fui-photo"></span>
+                    <span class="fui-info-circle"></span>
+                    <span class="fui-cross"></span>
+                </div>
+            </div>
+            <script src="/static/assets/waifu-tips.js"></script>
+            <script src="/static/assets/live2d.js"></script>
+            <script type="text/javascript">
+                initModel("/static/assets/")
+            </script>
             </div>
             <!--触发点赞或者取消点赞事件,把this(整个div块都传给ajax的这个function)-->
             <div class="like" onclick="likeChange(this, '{% get_content_type blog_detail %}', {{ blog_detail.pk }})">

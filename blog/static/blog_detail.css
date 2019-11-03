@@ -116,12 +116,6 @@ button.to-bottom{
     margin: 0;
     border: 0;
 }
-
-div.to-top-bottom button::before {
-    transform: rotate(-45deg) translate(0, -50%);
-    left: 0.4rem;
-}
-
 div.to-top-bottom button::after {
     transform: rotate(45deg) translate(0, -50%);
     right: 0.4rem;
@@ -135,4 +129,15 @@ div.to-top-bottom button:focus {
 /* 消除代码块和子之间的空格 */
 div.contend p{
     margin-bottom: 0;
+}
+
+div.my-live-2d{
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    /*width: 200px;*/
+    height: 300px;
+    z-index: 99999;
+    opacity: 1;
+    pointer-events: none;
 }
