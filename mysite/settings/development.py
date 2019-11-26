@@ -14,7 +14,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.247', '192.168.1.109', '10.19.110.13', 'http://mingtiantianshi.pythonanywhere.com/', '192.168.1.111', '192.168.42.193', '47.112.108.255']
+ALLOWED_HOSTS = ['192.168.6.13', '192.168.1.109', '10.19.110.13', 'http://mingtiantianshi.pythonanywhere.com/', '192.168.1.111', '192.168.42.193', '47.112.108.255']
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
