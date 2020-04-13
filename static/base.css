@@ -22,7 +22,7 @@ div.container-fluid{
 }
 
 ul {
-    list-style-type: none;
+    list-style-type: none!important;
 }
 
 div.container-fluid{
@@ -37,9 +37,6 @@ li.user-info a{
     padding-bottom: 10px;
     padding-top: 10px;
 }
-/*a.dropdown-toggle{*/
-    /*height: 53px;*/
-/*}*/
 
 span.unread_count{
     background-color: #d9534f!important;
@@ -77,4 +74,14 @@ img.navbar-avatar{
     /*margin-top: -7px;*/
     /*margin-right: 4px;*/
     /*border-radius: 4px;*/
+}
+
+/*设置导航栏的背景颜色*/
+div.container-fluid{
+    background-color: gainsboro!important;
+}
+
+/*设置处于mobile状态的时候下拉菜单颜色*/
+#bs-example-navbar-collapse-1{
+    background-color: gainsboro!important;
 }
